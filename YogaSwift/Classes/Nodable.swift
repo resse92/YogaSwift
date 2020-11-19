@@ -5,7 +5,7 @@
 //  Created by AlexZHU on 2020/9/18.
 //
 
-public protocol Nodable {
+public protocol Nodable: AnyObject {
     var flex: VirtualNode { get }
     var frame: CGRect { set get }
     func sizeThatFits(_ size: CGSize) -> CGSize
@@ -14,16 +14,16 @@ public protocol Nodable {
 
 extension Nodable {
     
-    func addSubItem(item: Nodable) -> Bool {
-        return false
-    }
-    
-    func sizeThatFits(_ size: CGSize) -> CGSize {
-        return CGSize.zero
-    }
-    
-    var frame: CGRect {
-        set {}
-        get { return self.flex.frame }
-    }
+//    func addSubItem(item: Nodable) -> Bool {
+//        return false
+//    }
+//    
+//    func sizeThatFits(_ size: CGSize) -> CGSize {
+//        return CGSize.zero
+//    }
+//    
+//    var frame: CGRect {
+//        set {}
+//        get { return self.flex.frame }
+//    }
 }

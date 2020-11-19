@@ -36,7 +36,7 @@ public final class VirtualNode {
         return YGNodeNewWithConfig(globalConfig)
     }()
     
-    var real: Nodable?
+    weak var real: Nodable?
     
     var children = [VirtualNode]()
     
@@ -98,31 +98,35 @@ public extension VirtualNode {
 
 // MARK: - Private Method
 private extension VirtualNode {
-    func attachNodes() {
-        func reattachNodes(nodes: [VirtualNode]) {
+    
+    func tryReattachNodes(nodes: [VirtualNode]) {
+        if YGNodeGetChildCount(self.ygNode) != self.children.count {
             YGNodeRemoveAllChildren(self.ygNode)
-            nodes.map { (parent: YGNodeGetParent($0.ygNode), child: $0) }.filter { $0.parent != nil }.forEach { (value) in
-                YGNodeRemoveChild(value.parent!, value.child.ygNode)
-            }
-            
-            nodes.enumerated().forEach {
-                YGNodeInsertChild(self.ygNode, $0.element.ygNode, UInt32($0.offset) )
+        }
+        nodes.enumerated().forEach {
+            let (offset, element) = $0
+            let targetChild = YGNodeGetChild(self.ygNode, UInt32($0.offset))
+            if targetChild != $0.element.ygNode {
+                if targetChild != nil {
+                    YGNodeRemoveChild(YGNodeGetParent(element.ygNode), element.ygNode)
+                }
+                
+                YGNodeInsertChild(self.ygNode, $0.element.ygNode, UInt32(offset) )
             }
         }
-        
+    }
+    
+    func attachNodes() {
         let node = self.ygNode
         if self.isLeaf {
             YGNodeRemoveAllChildren(node)
             YGNodeSetMeasureFunc(node, VirtualNode.measureFunc)
         } else {
             YGNodeSetMeasureFunc(node, nil)
+//            self.children = self.children.filter { YGNodeGetParent($0.ygNode) == self.ygNode }
             let subNodeToInclude = self.children.filter { $0.isEnabled }
-            let count = YGNodeGetChildCount(self.ygNode)
-            if count != subNodeToInclude.count
-                || !((0..<count).map { YGNodeGetChild(self.ygNode, $0) }.elementsEqual(self.children.map { $0.ygNode })) {
-                reattachNodes(nodes: subNodeToInclude)
-            }
             
+            tryReattachNodes(nodes: subNodeToInclude)
             subNodeToInclude.forEach({ $0.attachNodes() })
         }
     }
@@ -158,7 +162,7 @@ private extension VirtualNode {
         var shouldUseCurrentCoordinator = false
         
         parentFrame = frame
-        if var real = self.real {
+        if let real = self.real {
             real.frame = frame
             if parentItem == nil || parentItem?.addSubItem(item: real) == true {
                 parentFrame = CGRect.zero
@@ -257,6 +261,7 @@ extension VirtualNode: Equatable {
         guard YGNodeGetChildCount(node1) == YGNodeGetChildCount(node2) else {
             return false
         }
+        
         return true
     }
 }
