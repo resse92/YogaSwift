@@ -13,12 +13,12 @@ public func AFlex(_ node: Nodable? = nil) -> VirtualNode {
 }
 
 // Horizontal Flex default: VirtualNode().direction(.row)
-public func HFlex(_ node: Nodable? = nil, reversed: Bool = false) -> VirtualNode {
+public func Row(_ node: Nodable? = nil, reversed: Bool = false) -> VirtualNode {
     (node?.flex ?? AFlex(node)).direction(reversed ? .rowReverse : .row)
 }
 
 // Vertical Flex default: VirtualNode().direction(.column)
-public func VFlex(_ node: Nodable? = nil, reversed: Bool = false) -> VirtualNode {
+public func Column(_ node: Nodable? = nil, reversed: Bool = false) -> VirtualNode {
     (node?.flex ?? AFlex(node)).direction(reversed ? .columnReverse : .column)
 }
 

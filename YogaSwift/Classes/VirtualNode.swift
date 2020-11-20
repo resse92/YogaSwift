@@ -38,6 +38,8 @@ public final class VirtualNode {
     
     var real: Nodable?
     
+    public var identifier: String = ""
+    
     var children = [VirtualNode]()
     
     public init() {

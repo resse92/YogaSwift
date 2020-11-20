@@ -46,6 +46,12 @@ public extension VirtualNode {
     }
     
     @discardableResult
+    func alignContent(_ value: AlignContent) -> Self {
+        YGNodeStyleSetAlignContent(self.ygNode, value.yogaValue)
+        return self
+    }
+    
+    @discardableResult
     func alignSelf(_ value: AlignSelf) -> Self {
         YGNodeStyleSetAlignSelf(self.ygNode, value.yogaValue)
         return self
