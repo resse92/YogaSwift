@@ -30,6 +30,7 @@ public final class VirtualNode {
     private var ygNodeInit = false
     lazy var ygNode: YGNodeRef = {
         let globalConfig = YGConfigNew()
+        
         YGConfigSetExperimentalFeatureEnabled(globalConfig, .webFlexBasis, true)
         YGConfigSetPointScaleFactor(globalConfig, Float(screenScale))
         self.ygNodeInit = true

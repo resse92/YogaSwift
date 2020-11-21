@@ -24,7 +24,7 @@ private class BaseView: UIView {
         return label
     }()
     
-    var imageViews = [ImageView(), ImageView()]
+    var imageViews = [ImageView(), UIImageView()]
 }
 
 private class LeftView: BaseView {
@@ -32,10 +32,10 @@ private class LeftView: BaseView {
         super.init(frame: frame)
         
         Column(self).alignItems(.stretch).build {
-            self.imageViews[0].flex.grow(1)
+            self.imageViews[1].flex.grow(1)
         }
         
-        self.imageViews[0].image = UIImage.p2
+        self.imageViews[1].image = UIImage.p2
     }
     
     required init?(coder: NSCoder) {
@@ -56,30 +56,23 @@ private class RightView: BaseView {
         super.init(frame: frame)
         
         Column(self).padding(10).build {
-            self.titleLabel
+            self.titleLabel.flex
             
-            Row().marginTop(10).grow(1).alignItems(.stretch)
+            Row().marginTop(4).grow(1).alignItems(.stretch).shrink(2)
                 .build {
-                    Column().alignItems(.stretch).width(50%).shrink(2).justifyContent(.start)
+                    Column().alignItems(.stretch).justifyContent(.start).grow(1).width(50%).shrink(2)
                         .build {
                             self.subtitleLabel.flex.shrink(0)
                             
-                            self.imageViews[0].flex.marginTop(2).grow(1).aspectRatio(1)
+                            self.imageViews[0].flex.marginTop(2).grow(1).aspectRatio(1).alignSelf(.center).shrink(1)
                         }
                     
-                    self.imageViews[1].flex.width(50%).marginLeft(10).shrink(2).aspectRatio(1)
+                    self.imageViews[1].flex.aspectRatio(1).grow(1).marginLeft(10).alignSelf(.center).width(50%).shrink(2)
                 }
         }
-        self.imageViews[0].flex.identifier = "1"
         self.imageViews[0].tag = 10
-//        self.imageViews[0].image = UIImage.p1
-//        self.imageViews[1].image = UIImage.p5
-//        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
-//            self.imageViews[0].image = UIImage.p1
-//        }
-//        DispatchQueue.main.async {
-//            self.imageViews[0].image = UIImage.p1
-//        }
+        self.imageViews[0].image = UIImage.p1
+        self.imageViews[1].image = UIImage.p5
     }
     
     required init?(coder: NSCoder) {
@@ -88,7 +81,6 @@ private class RightView: BaseView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-//        self.flex.layout()
     }
 }
 
