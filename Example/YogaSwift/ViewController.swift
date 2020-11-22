@@ -8,38 +8,69 @@
 
 import UIKit
 import YogaSwift
+
+enum DemoEnums: String, CaseIterable {
+    case Demo1
+    
+    func vc() -> UIViewController {
+        let vc: UIViewController
+        switch self {
+        case .Demo1:
+            vc = Demo1ViewController()
+        }
+        vc.title = self.rawValue
+        return vc
+    }
+}
+
 class ViewController: UIViewController {
     
-    var subview: UIView?
+    var allcases = DemoEnums.allCases
+    
+    lazy var tableView: UITableView = {
+        let tb = UITableView()
+        tb.delegate = self
+        tb.dataSource = self
+        tb.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tb.tableFooterView = UIView()
+        return tb
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
-        let v = UIView()
-        v.backgroundColor = UIColor.red
-        self.view.addSubview(v)
-        self.view.flex.direction(.column).alignItems(.center).justifyContent(.center).build {
-            v.flex.size(CGSize(width: 100, height: 100))
+        Column(self.view).build {
+            self.tableView.flex.grow(1).alignSelf(.stretch)
         }
-        self.subview = v
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        self.view.flex.layout()
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        self.subview?.removeFromSuperview()
-        self.subview = nil
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        self.view.flex.layout()
+    }
 
 }
 
+extension ViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        allcases.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let tbc = tableView.dequeueReusableCell(withIdentifier: "cell") else { fatalError() }
+        tbc.textLabel?.text = allcases[indexPath.row].rawValue
+        return tbc
+    }
+}
+
+extension ViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        self.navigationController?.pushViewController(self.allcases[indexPath.row].vc(), animated: true)
+    }
+}

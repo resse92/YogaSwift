@@ -32,11 +32,7 @@ extension UIView: Nodable {
 
 extension CALayer: Nodable {
     public func sizeThatFits(_ size: CGSize) -> CGSize {
-//        precondition(false, """
-//                            calayer must provide size that size func
-//                            VirtualNode().sizeThatFits(...) or VirtualNode().size
-//                            """)
-        return CGSize.zero
+        CGSize.zero
     }
     
     public var flex: VirtualNode {
@@ -69,5 +65,4 @@ public extension VirtualNode {
     func addItem(_ layer: CALayer) -> VirtualNode {
         self.addItem(layer.flex)
     }
-    
 }

@@ -3,6 +3,7 @@ use_frameworks!
 target 'YogaSwift_Example' do
   pod 'YogaSwift', :path => '../'
   pod 'Yoga'
+  pod 'LookinServer'
   target 'YogaSwift_Tests' do
     inherit! :search_paths
 
