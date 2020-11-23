@@ -67,7 +67,7 @@ private class RightView: BaseView {
                             self.imageViews[0].flex.marginTop(2).grow(1).aspectRatio(1).alignSelf(.center).shrink(1)
                         }
                     
-                    self.imageViews[1].flex.aspectRatio(1).grow(1).marginLeft(10).alignSelf(.center).width(50%).shrink(2)
+                    self.imageViews[1].flex.aspectRatio(1).marginLeft(10).alignSelf(.center).width(50%).shrink(2)
                 }
         }
         self.imageViews[0].tag = 10
@@ -81,6 +81,7 @@ private class RightView: BaseView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+//        self.flex.layout()
     }
 }
 

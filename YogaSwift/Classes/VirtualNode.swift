@@ -38,6 +38,7 @@ public final class VirtualNode {
     }()
     
     weak var real: Nodable?
+    public weak var parentNode: VirtualNode?
     
     public var identifier: String = ""
     
@@ -78,24 +79,33 @@ public extension VirtualNode {
     @discardableResult
     final func addItem(_ item: VirtualNode = VirtualNode()) -> VirtualNode {
         self.children.append(item)
+        item.parentNode = self
         return item
     }
     
     @discardableResult
     final func build(@FlexBuilder _ builder: () -> [Flexable]) -> VirtualNode {
-        self.children = builder().map(\.vNode)
+        let nodes = builder().map(\.vNode)
+        self.children.append(contentsOf: nodes)
+        nodes.forEach { $0.parentNode = self }
         return self
     }
     
     @discardableResult
     final func build(@FlexBuilder _ builder: () -> Flexable) -> VirtualNode {
-        self.children = [builder().vNode]
+        let nodes = [builder().vNode]
+        self.children.append(contentsOf: nodes)
+        nodes.forEach { $0.parentNode = self }
         return self
     }
     
     func alwaysDirty(_ isDirty: Bool) -> VirtualNode {
         self.alwaysDirty = isDirty
         return self
+    }
+    
+    final func removeFromParentNode() {
+        self.parentNode?.children.removeAll(where: { $0 == self })
     }
 }
 
@@ -126,7 +136,6 @@ private extension VirtualNode {
             YGNodeSetMeasureFunc(node, VirtualNode.measureFunc)
         } else {
             YGNodeSetMeasureFunc(node, nil)
-//            self.children = self.children.filter { YGNodeGetParent($0.ygNode) == self.ygNode }
             let subNodeToInclude = self.children.filter { $0.isEnabled }
             
             tryReattachNodes(nodes: subNodeToInclude)
@@ -145,7 +154,7 @@ private extension VirtualNode {
         var parentFrame = parent ?? CGRect.zero
         
         func roundPixelValue(_ value: CGFloat) -> CGFloat {
-            return CGFloat(roundf(Float(value * screenScale))) / screenScale
+            return (CGFloat(roundf(Float(value * screenScale))) / screenScale).rounded()
         }
         
         let topLeft = CGPoint(x: CGFloat(YGNodeLayoutGetLeft(self.ygNode)),
