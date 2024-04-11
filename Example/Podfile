@@ -2,7 +2,7 @@ use_frameworks!
 
 target 'YogaSwift_Example' do
   pod 'YogaSwift', :path => '../'
-  pod 'Yoga'
+#  pod 'Yoga', :git => 'https://github.com/facebook/yoga.git', :tag => '1.18.0'
   pod 'LookinServer'
   target 'YogaSwift_Tests' do
     inherit! :search_paths
