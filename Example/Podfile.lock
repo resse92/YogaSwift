@@ -1,18 +1,25 @@
 PODS:
-  - YogaSwift (0.0.1):
-    - YogaSwift/yoga (= 0.0.1)
+  - LookinServer (1.2.8):
+    - LookinServer/Core (= 1.2.8)
+  - LookinServer/Core (1.2.8)
   - YogaSwift/yoga (0.0.1)
 
 DEPENDENCIES:
-  - YogaSwift (from `../`)
+  - LookinServer
+  - YogaSwift/yoga (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - LookinServer
 
 EXTERNAL SOURCES:
   YogaSwift:
     :path: "../"
 
 SPEC CHECKSUMS:
-  YogaSwift: d474c5f7b294919e8be4a40f29736a8a1a93ea40
+  LookinServer: 1b2b61c6402ae29fa22182d48f5cd067b4e99e80
+  YogaSwift: f2a7bb0e43f07c7e334acc3f39d4d4b1106ad534
 
-PODFILE CHECKSUM: b34a17d91ecb30a68a00811b6cd420a3a0530b1f
+PODFILE CHECKSUM: fcea4107ebf3bb085a780d1914195b57fd60b2a0
 
 COCOAPODS: 1.15.2
