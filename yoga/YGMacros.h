@@ -35,7 +35,7 @@
 #define YG_EXPORT
 #endif
 
-#ifdef NS_ENUM
+#ifdef NSENUM
 // Cannot use NSInteger as NSInteger has a different size than int (which is the
 // default type of a enum). Therefor when linking the Yoga C library into obj-c
 // the header is a mismatch for the Yoga ABI.

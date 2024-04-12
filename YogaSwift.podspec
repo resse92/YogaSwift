@@ -25,12 +25,17 @@ Pod::Spec.new do |s|
     s.source           = { :git => 'https://github.com/resse92/YogaSwift.git', :tag => s.version.to_s }
 
     s.ios.deployment_target = '10.0'
-
-    s.source_files = 'YogaSwift/Classes/**/*'
+    
+    s.default_subspec = 'core'
+    
+    s.subspec 'core' do |subspec|
+        subspec.source_files = 'YogaSwift/Classes/**/*'
+    end
 
     s.subspec 'yoga' do |subspec|
         subspec.source_files = "yoga/**/*.{h,m,mm,cpp,c}"
-        subspec.public_header_files = "yoga/**/*.h"
+#        subspec.public_header_files = "yoga/Yoga.h"
+        subspec.public_header_files = "yoga/*.h"
 
         subspec.compiler_flags = [
             '-fno-omit-frame-pointer',
@@ -40,17 +45,15 @@ Pod::Spec.new do |s|
             '-std=c++20',
             '-fPIC'
         ]
-        
-        subspec.pod_target_xcconfig = {
-    'HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/YogaSwift/yoga"',
-    'DEFINES_MODULE' => 'YES',
-    }
 
         subspec.libraries = 'c++'
         subspec.pod_target_xcconfig = {
             'DEFINES_MODULE' => 'YES',
             'HEADER_SEARCH_PATHS' => '"$(PODS_TARGET_SRCROOT)"',
+            'OTHER_LDFLAGS' => '-l"stdc++"',
+#            'OTHER_CPLUSPLUSFLAGS' => '-std=c++20', # 仅应用于 C++ 文件
         }
+#        subspec.preserve_paths = 'yoga/**/*.h'
     end
 
 end

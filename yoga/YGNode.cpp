@@ -7,7 +7,7 @@
 
 #include <yoga/Yoga.h>
 
-//#include <yoga/algorithm/Cache.h>
+#include <yoga/algorithm/Cache.h>
 #include <yoga/algorithm/CalculateLayout.h>
 #include <yoga/debug/AssertFatal.h>
 #include <yoga/debug/Log.h>

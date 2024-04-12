@@ -30,8 +30,11 @@ public final class VirtualNode {
     private var ygNodeInit = false
     lazy var ygNode: YGNodeRef = {
         let globalConfig = YGConfigNew()
-        
-        YGConfigSetExperimentalFeatureEnabled(globalConfig, .webFlexBasis, true)
+        YGConfigSetExperimentalFeatureEnabled(
+            globalConfig,
+            YGExperimentalFeatureWebFlexBasis,
+            true
+        )
         YGConfigSetPointScaleFactor(globalConfig, Float(screenScale))
         self.ygNodeInit = true
         return YGNodeNewWithConfig(globalConfig)
@@ -239,8 +242,8 @@ public extension VirtualNode {
 // static
 extension VirtualNode {
     private static let measureFunc: @convention(c) (YGNodeRef?, Float, YGMeasureMode, Float, YGMeasureMode) -> YGSize = { (node, width, widthMode, height, heightMode) in
-        let constrainedWidth = widthMode == .undefined ? Float.greatestFiniteMagnitude : width
-        let constrainedHeight = heightMode == .undefined ? Float.greatestFiniteMagnitude: height
+        let constrainedWidth = widthMode == YGMeasureModeUndefined ? Float.greatestFiniteMagnitude : width
+        let constrainedHeight = heightMode == YGMeasureModeUndefined ? Float.greatestFiniteMagnitude: height
         
         var measureSize = CGSize.zero
         if let context = YGNodeGetContext(node)?.assumingMemoryBound(to: Context.self).pointee {
@@ -254,13 +257,13 @@ extension VirtualNode {
 
     private static func sanitizeMeasurement(_ constrained: Float, _ measured: Float, _ mode: YGMeasureMode) -> Float {
         switch mode {
-        case .exactly:
+        case YGMeasureModeExactly:
             return constrained
-        case .atMost:
+        case YGMeasureModeAtMost:
             return min(constrained, measured)
-        case .undefined:
+        case YGMeasureModeUndefined:
             return measured
-        @unknown default:
+        default:
             fatalError()
         }
     }

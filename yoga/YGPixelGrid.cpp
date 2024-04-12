@@ -7,7 +7,7 @@
 
 #include <yoga/Yoga.h>
 
-//#include <yoga/algorithm/PixelGrid.h>
+#include <yoga/algorithm/PixelGrid.h>
 
 using namespace facebook;
 using namespace facebook::yoga;
