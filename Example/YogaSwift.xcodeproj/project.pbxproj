@@ -36,7 +36,7 @@
 
 /* Begin PBXFileReference section */
 		03D6085FA5E78E16815CD04D /* Pods-YogaSwift_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YogaSwift_Tests.debug.xcconfig"; path = "Target Support Files/Pods-YogaSwift_Tests/Pods-YogaSwift_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		0979E864A1C7A6817B0F5B14 /* YogaSwift.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = YogaSwift.podspec; path = ../YogaSwift.podspec; sourceTree = "<group>"; };
+		0979E864A1C7A6817B0F5B14 /* YogaSwift.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = YogaSwift.podspec; path = ../YogaSwift.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		0F0FEAAB3989326E134439F7 /* Pods-YogaSwift_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YogaSwift_Example.debug.xcconfig"; path = "Target Support Files/Pods-YogaSwift_Example/Pods-YogaSwift_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		15521588E8FB06DB41B94936 /* Pods-YogaSwift_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YogaSwift_Tests.release.xcconfig"; path = "Target Support Files/Pods-YogaSwift_Tests/Pods-YogaSwift_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* YogaSwift_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YogaSwift_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
