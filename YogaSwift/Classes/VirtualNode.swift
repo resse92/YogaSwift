@@ -118,13 +118,13 @@ private extension VirtualNode {
         }
         nodes.enumerated().forEach {
             let (offset, element) = $0
-            let targetChild = YGNodeGetChild(self.ygNode, UInt32($0.offset))
+            let targetChild = YGNodeGetChild(self.ygNode, Int($0.offset))
             if targetChild != $0.element.ygNode {
                 if targetChild != nil {
                     YGNodeRemoveChild(YGNodeGetParent(element.ygNode), element.ygNode)
                 }
                 
-                YGNodeInsertChild(self.ygNode, $0.element.ygNode, UInt32(offset) )
+                YGNodeInsertChild(self.ygNode, $0.element.ygNode, Int(offset) )
             }
         }
     }
