@@ -7,23 +7,51 @@
 
 import Foundation
 
-// Flex default: VirtualNode()
-public func AFlex(_ node: Nodable? = nil) -> VirtualNode {
-    return VirtualNode(node)
-}
-
 // Horizontal Flex default: VirtualNode().direction(.row)
-public func Row(_ node: Nodable? = nil, reversed: Bool = false) -> VirtualNode {
-    (node?.flex ?? AFlex(node)).direction(reversed ? .rowReverse : .row)
+@discardableResult
+public func Row(
+    _ node: Nodable? = nil,
+    reversed: Bool = false,
+    @FlexBuilder content: () -> [Flexable]
+) -> VirtualNode {
+    (node?.flex ?? VirtualNode())
+        .direction(reversed ? .rowReverse : .row)
+        .build(content)
 }
 
 // Vertical Flex default: VirtualNode().direction(.column)
-public func Column(_ node: Nodable? = nil, reversed: Bool = false) -> VirtualNode {
-    (node?.flex ?? AFlex(node)).direction(reversed ? .columnReverse : .column)
+@discardableResult
+public func Column(
+    _ node: Nodable? = nil,
+    reversed: Bool = false,
+    @FlexBuilder content: () -> [Flexable]
+) -> VirtualNode {
+    (node?.flex ?? VirtualNode()).direction(reversed ? .columnReverse : .column)
+        .build(content)
 }
 
+@discardableResult
+public func Absolute(
+    _ node: Nodable? = nil,
+    @FlexBuilder content: () -> [Flexable]
+) -> VirtualNode {
+    (node?.flex ?? VirtualNode()).position(.absolute)
+        .build(content)
+}
+
+@discardableResult
+public func Static(
+    _ node: Nodable? = nil,
+    @FlexBuilder content: () -> [Flexable]
+) -> VirtualNode {
+    (node?.flex ?? VirtualNode()).position(.static)
+        .build(content)
+}
+
+
+
 extension VirtualNode {
-    public convenience init(_ node: Nodable?) {
+    convenience init(_ node: Nodable?) {
         self.init()
         if let node = node {
             obj = node

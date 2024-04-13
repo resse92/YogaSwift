@@ -9,6 +9,14 @@ import UIKit
 
 private var flexLayoutAssociatedObjectHandle = 125_312_282_1
 
+
+
+class YogaSwiftUtil {
+    static func setup() {
+        
+    }
+}
+
 extension UIView: Nodable {
     public var flex: VirtualNode {
         if let flex = objc_getAssociatedObject(self, &flexLayoutAssociatedObjectHandle) as? VirtualNode {

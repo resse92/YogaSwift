@@ -105,6 +105,8 @@ extension VirtualNode {
         case relative
         // Positioned absolutely in regards to its container. The item is positionned using properties top, bottom, left, right, start, end.
         case absolute
+        
+        case `static`
     }
     
     /**
@@ -218,6 +220,7 @@ extension VirtualNode.Position {
         switch self {
         case .relative: return YGPositionTypeRelative
         case .absolute: return YGPositionTypeAbsolute
+        case .static: return YGPositionTypeStatic
         }
     }
 }

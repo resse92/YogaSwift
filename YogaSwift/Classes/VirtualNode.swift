@@ -71,9 +71,9 @@ public final class VirtualNode {
 }
 
 // children
-public extension VirtualNode {
+extension VirtualNode {
     @discardableResult
-    final func addItem(_ item: VirtualNode = VirtualNode()) -> VirtualNode {
+    final public func addItem(_ item: VirtualNode = VirtualNode()) -> VirtualNode {
         self.children.append(item)
         item.parent = self
         return item
@@ -103,7 +103,6 @@ public extension VirtualNode {
 
 // MARK: - Private Method
 private extension VirtualNode {
-    
     func tryReattachNodes(nodes: [VirtualNode]) {
         if YGNodeGetChildCount(self.ygNode) != self.children.count {
             YGNodeRemoveAllChildren(self.ygNode)
@@ -122,6 +121,7 @@ private extension VirtualNode {
     }
     
     func attachNodes() {
+        
         let node = self.ygNode
         if self.isLeaf {
             YGNodeRemoveAllChildren(node)
@@ -136,7 +136,7 @@ private extension VirtualNode {
     }
     
     // apply layout frame to each real item
-    func applyLayoutToReal(parent: CGRect?, parentItem: Nodable?) {
+    func applyLayoutToObj(parent: CGRect?, parentItem: Nodable?) {
         assert(Thread.isMainThread, "Flexbox setting frame should only be on the main thread")
         
         guard self.isEnabled else {
@@ -175,7 +175,7 @@ private extension VirtualNode {
         }
         
         if !self.isLeaf {
-            self.children.forEach({ $0.applyLayoutToReal(parent: parentFrame, parentItem: (shouldUseCurrentCoordinator ? self.obj : nil) ?? parentItem) })
+            self.children.forEach({ $0.applyLayoutToObj(parent: parentFrame, parentItem: (shouldUseCurrentCoordinator ? self.obj : nil) ?? parentItem) })
         }
     }
 }
@@ -200,7 +200,7 @@ public extension VirtualNode {
         
         self.calculateLayout(size: CGSize(width: width, height: height))
         if syncFrame {
-            self.applyLayoutToReal(parent: self.obj?.frame, parentItem: nil)
+            self.applyLayoutToObj(parent: self.obj?.frame, parentItem: nil)
         }
     }
     
@@ -266,17 +266,17 @@ extension VirtualNode {
     }
 }
 
-//extension VirtualNode: Equatable {
-//    public static func == (lhs: VirtualNode, rhs: VirtualNode) -> Bool {
-//        let node1 = lhs.ygNode
-//        let node2 = rhs.ygNode
-//        guard YGNodeGetChildCount(node1) == YGNodeGetChildCount(node2) else {
-//            return false
-//        }
-//        
-//        return true
-//    }
-//}
+extension VirtualNode: Equatable {
+    public static func == (lhs: VirtualNode, rhs: VirtualNode) -> Bool {
+        let node1 = lhs.ygNode
+        let node2 = rhs.ygNode
+        guard YGNodeGetChildCount(node1) == YGNodeGetChildCount(node2) else {
+            return false
+        }
+        
+        return node1 == node2
+    }
+}
 
 private extension CGRect {
     init(x: Float, y: Float, width: Float, height: Float) {

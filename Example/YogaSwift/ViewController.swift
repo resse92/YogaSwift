@@ -8,7 +8,6 @@
 
 import UIKit
 import YogaSwift
-//import YogaSwift.Yoga
 
 enum DemoEnums: String, CaseIterable {
     case Demo1
@@ -40,7 +39,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        Column(self.view).build {
+        Column(self.view) {
             self.tableView.flex.grow(1).alignSelf(.stretch)
         }
     }

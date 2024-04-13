@@ -29,7 +29,7 @@ extension VirtualNode: Flexable {
     }
 }
 
-@_functionBuilder
+@resultBuilder
 public struct FlexBuilder {
     
     public static func buildBlock(_ node: Flexable) -> [Flexable] {

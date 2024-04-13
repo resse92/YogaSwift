@@ -20,9 +20,14 @@ it, simply add the following line to your Podfile:
 pod 'YogaSwift'
 ```
 
+## TODO
+
+[ ] PositionStatic
+[ ] baseline related
+
 ## Author
 
-zhuruliang, zrl920825@hotmail.com
+resse, zrljp12@gmail.com
 
 ## License
 
