@@ -2,32 +2,27 @@
 //  Node.swift
 //  Flexbox
 //
-//  Created by AlexZHU on 2020/6/4.
-//  Copyright © 2020 AlexZHU. All rights reserved.
+//  Created by resse on 2020/6/4.
+//  Copyright © 2020 resse. All rights reserved.
 //
 
 import UIKit
-import yoga
 
 private let screenScale = UIScreen.main.scale
 
 public final class VirtualNode {
     
-    // Mark as alwaysDirty means that calculate this node's frame every time
-    var alwaysDirty = false
-    
-    public var isEnabled = true
-    
-    private struct Context {
-        var sizeThatFits: (CGSize) -> CGSize
-        init(sizeThatFits: @escaping (CGSize) -> CGSize) {
-            self.sizeThatFits = sizeThatFits
+    private class Context {
+        weak var node: VirtualNode?
+        init(_ node: VirtualNode) {
+            self.node = node
+        }
+        
+        func sizeThatFits(_ size: CGSize) -> CGSize {
+            self.node?.obj?.sizeThatFits(size) ?? .zero
         }
     }
     
-    private var context: Context!
-    
-    private var ygNodeInit = false
     lazy var ygNode: YGNodeRef = {
         let globalConfig = YGConfigNew()
         YGConfigSetExperimentalFeatureEnabled(
@@ -36,20 +31,24 @@ public final class VirtualNode {
             true
         )
         YGConfigSetPointScaleFactor(globalConfig, Float(screenScale))
-        self.ygNodeInit = true
         return YGNodeNewWithConfig(globalConfig)
     }()
     
-    weak var real: Nodable?
-    public weak var parentNode: VirtualNode?
+    private var context: Context?
     
-    public var identifier: String = ""
+    weak var obj: Nodable?
     
+    public weak var parent: VirtualNode?
     var children = [VirtualNode]()
     
-    public init() {
-        context = Context.init(sizeThatFits: sizeThatFits(size:))
-        YGNodeSetContext(self.ygNode, &context)
+    // Mark as alwaysDirty means that calculate this node's frame every time
+    var alwaysDirty = false
+    public var isEnabled = true
+    
+    public required init() {
+        let context = Context(self)
+        let ptr = Unmanaged.passRetained(context).toOpaque()
+        YGNodeSetContext(self.ygNode, ptr)
     }
     
     var isLeaf: Bool {
@@ -66,14 +65,8 @@ public final class VirtualNode {
         )
     }
     
-    private func sizeThatFits(size: CGSize) -> CGSize {
-        return self.real?.sizeThatFits(size) ?? CGSize.zero
-    }
-    
     deinit {
-        if self.ygNodeInit {
-            YGNodeFree(self.ygNode)
-        }
+        YGNodeFree(self.ygNode)
     }
 }
 
@@ -82,7 +75,7 @@ public extension VirtualNode {
     @discardableResult
     final func addItem(_ item: VirtualNode = VirtualNode()) -> VirtualNode {
         self.children.append(item)
-        item.parentNode = self
+        item.parent = self
         return item
     }
     
@@ -90,7 +83,7 @@ public extension VirtualNode {
     final func build(@FlexBuilder _ builder: () -> [Flexable]) -> VirtualNode {
         let nodes = builder().map(\.vNode)
         self.children.append(contentsOf: nodes)
-        nodes.forEach { $0.parentNode = self }
+        nodes.forEach { $0.parent = self }
         return self
     }
     
@@ -98,17 +91,13 @@ public extension VirtualNode {
     final func build(@FlexBuilder _ builder: () -> Flexable) -> VirtualNode {
         let nodes = [builder().vNode]
         self.children.append(contentsOf: nodes)
-        nodes.forEach { $0.parentNode = self }
+        nodes.forEach { $0.parent = self }
         return self
     }
     
     func alwaysDirty(_ isDirty: Bool) -> VirtualNode {
         self.alwaysDirty = isDirty
         return self
-    }
-    
-    final func removeFromParentNode() {
-        self.parentNode?.children.removeAll(where: { $0 == self })
     }
 }
 
@@ -177,7 +166,7 @@ private extension VirtualNode {
         var shouldUseCurrentCoordinator = false
         
         parentFrame = frame
-        if let real = self.real {
+        if let real = self.obj {
             real.frame = frame
             if parentItem == nil || parentItem?.addSubItem(item: real) == true {
                 parentFrame = CGRect.zero
@@ -186,7 +175,7 @@ private extension VirtualNode {
         }
         
         if !self.isLeaf {
-            self.children.forEach({ $0.applyLayoutToReal(parent: parentFrame, parentItem: (shouldUseCurrentCoordinator ? self.real : nil) ?? parentItem) })
+            self.children.forEach({ $0.applyLayoutToReal(parent: parentFrame, parentItem: (shouldUseCurrentCoordinator ? self.obj : nil) ?? parentItem) })
         }
     }
 }
@@ -198,7 +187,7 @@ public extension VirtualNode {
         var width = Float.greatestFiniteMagnitude
         var height = Float.greatestFiniteMagnitude
         
-        if let real = self.real {
+        if let real = self.obj {
             width = Float(real.frame.size.width)
             height = Float(real.frame.size.height)
         }
@@ -211,7 +200,7 @@ public extension VirtualNode {
         
         self.calculateLayout(size: CGSize(width: width, height: height))
         if syncFrame {
-            self.applyLayoutToReal(parent: self.real?.frame, parentItem: nil)
+            self.applyLayoutToReal(parent: self.obj?.frame, parentItem: nil)
         }
     }
     
@@ -241,18 +230,26 @@ public extension VirtualNode {
 
 // static
 extension VirtualNode {
-    private static let measureFunc: @convention(c) (YGNodeRef?, Float, YGMeasureMode, Float, YGMeasureMode) -> YGSize = { (node, width, widthMode, height, heightMode) in
+    private static let measureFunc: YGMeasureFunc = { (node, width, widthMode, height, heightMode) in
         let constrainedWidth = widthMode == YGMeasureModeUndefined ? Float.greatestFiniteMagnitude : width
         let constrainedHeight = heightMode == YGMeasureModeUndefined ? Float.greatestFiniteMagnitude: height
         
-        var measureSize = CGSize.zero
-        if let context = YGNodeGetContext(node)?.assumingMemoryBound(to: Context.self).pointee {
+        let constrainedSize = CGSize(width: CGFloat(constrainedWidth), height: CGFloat(constrainedHeight))
+        
+        let measureSize: CGSize
+        
+        if let ptr = YGNodeGetContext(node) {
+            let context = Unmanaged<Context>.fromOpaque(ptr).takeUnretainedValue()
             let constrainedSize = CGSize(width: CGFloat(constrainedWidth), height: CGFloat(constrainedHeight))
             measureSize = context.sizeThatFits(constrainedSize)
+        } else {
+            measureSize = .zero
         }
         
-        return YGSize(width: sanitizeMeasurement(constrainedWidth, Float(measureSize.width), widthMode),
-                      height: sanitizeMeasurement(constrainedHeight, Float(measureSize.height), heightMode))
+        return YGSize(
+            width: sanitizeMeasurement(constrainedWidth, Float(measureSize.width), widthMode),
+            height: sanitizeMeasurement(constrainedHeight, Float(measureSize.height), heightMode)
+        )
     }
 
     private static func sanitizeMeasurement(_ constrained: Float, _ measured: Float, _ mode: YGMeasureMode) -> Float {
@@ -269,17 +266,17 @@ extension VirtualNode {
     }
 }
 
-extension VirtualNode: Equatable {
-    public static func == (lhs: VirtualNode, rhs: VirtualNode) -> Bool {
-        let node1 = lhs.ygNode
-        let node2 = rhs.ygNode
-        guard YGNodeGetChildCount(node1) == YGNodeGetChildCount(node2) else {
-            return false
-        }
-        
-        return true
-    }
-}
+//extension VirtualNode: Equatable {
+//    public static func == (lhs: VirtualNode, rhs: VirtualNode) -> Bool {
+//        let node1 = lhs.ygNode
+//        let node2 = rhs.ygNode
+//        guard YGNodeGetChildCount(node1) == YGNodeGetChildCount(node2) else {
+//            return false
+//        }
+//        
+//        return true
+//    }
+//}
 
 private extension CGRect {
     init(x: Float, y: Float, width: Float, height: Float) {

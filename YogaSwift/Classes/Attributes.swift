@@ -2,11 +2,10 @@
 //  Flex.swift
 //  Flexbox
 //
-//  Created by AlexZHU on 2020/6/19.
+//  Created by resse on 2020/6/19.
 //
 
 // MARK: - Flex Attributes
-//import yoga
 
 public extension VirtualNode {
     @discardableResult

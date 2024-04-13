@@ -2,7 +2,7 @@
 //  Percent.swift
 //  Flexbox
 //
-//  Created by AlexZHU on 2020/6/5.
+//  Created by resse on 2020/6/5.
 //
 
 import UIKit

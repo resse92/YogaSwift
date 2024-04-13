@@ -2,10 +2,8 @@ source 'https://cdn.cocoapods.org/'
 use_frameworks!
 
 target 'YogaSwift_Example' do
-  pod 'YogaSwift', :path => '../'
-  pod 'YogaSwift/yoga', :path => '../'
+  pod 'YogaSwift', :path => '../', :subspecs => ['core', 'yoga']
   
-#  pod 'Yoga', :path => '../yoga/Yoga.podspec'
   pod 'LookinServer'
 #  pod 'FlexLayout'
   

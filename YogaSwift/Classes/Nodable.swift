@@ -2,7 +2,7 @@
 //  Nodable.swift
 //  Flexbox
 //
-//  Created by AlexZHU on 2020/9/18.
+//  Created by resse on 2020/9/18.
 //
 
 public protocol Nodable: AnyObject {

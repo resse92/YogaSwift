@@ -7,9 +7,8 @@
 //
 
 import UIKit
-//import YogaSwift
+import YogaSwift
 //import YogaSwift.Yoga
-
 
 enum DemoEnums: String, CaseIterable {
     case Demo1
@@ -41,9 +40,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-//        Column(self.view).build {
-//            self.tableView.flex.grow(1).alignSelf(.stretch)
-//        }
+        Column(self.view).build {
+            self.tableView.flex.grow(1).alignSelf(.stretch)
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -53,7 +52,7 @@ class ViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-//        self.view.flex.layout()
+        self.view.flex.layout()
     }
 
 }

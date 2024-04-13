@@ -50,8 +50,6 @@ Pod::Spec.new do |s|
         subspec.pod_target_xcconfig = {
             'DEFINES_MODULE' => 'YES',
             'HEADER_SEARCH_PATHS' => '"$(PODS_TARGET_SRCROOT)"',
-            'OTHER_LDFLAGS' => '-l"stdc++"',
-#            'OTHER_CPLUSPLUSFLAGS' => '-std=c++20', # 仅应用于 C++ 文件
         }
 #        subspec.preserve_paths = 'yoga/**/*.h'
     end
