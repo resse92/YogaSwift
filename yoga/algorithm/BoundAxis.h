@@ -9,7 +9,7 @@
 
 #include <yoga/algorithm/FlexDirection.h>
 #include <yoga/enums/Dimension.h>
-#include <yoga/enums/FlexDirection.h>
+#include <yoga/enums/EnumsFlexDirection.h>
 #include <yoga/node/Node.h>
 #include <yoga/numeric/Comparison.h>
 #include <yoga/numeric/FloatOptional.h>

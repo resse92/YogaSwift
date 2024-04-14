@@ -14,12 +14,12 @@
 #include <yoga/Yoga.h>
 
 #include <yoga/algorithm/FlexDirection.h>
-#include <yoga/enums/Align.h>
+#include <yoga/enums/EnumsAlign.h>
 #include <yoga/enums/Dimension.h>
 #include <yoga/enums/Direction.h>
 #include <yoga/enums/Display.h>
 #include <yoga/enums/Edge.h>
-#include <yoga/enums/FlexDirection.h>
+#include <yoga/enums/EnumsFlexDirection.h>
 #include <yoga/enums/Gutter.h>
 #include <yoga/enums/Justify.h>
 #include <yoga/enums/Overflow.h>

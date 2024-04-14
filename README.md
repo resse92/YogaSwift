@@ -20,6 +20,12 @@ it, simply add the following line to your Podfile:
 pod 'YogaSwift'
 ```
 
+## memo
+yoga version 3.0.3
+change file name:
+1. enums/Align.h -> enums/EnumsAligh.h
+2. enums/FlexDirection.h -> enums/EnumsFlexDirection.h
+
 ## TODO
 
 [ ] PositionStatic

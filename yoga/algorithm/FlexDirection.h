@@ -13,7 +13,7 @@
 #include <yoga/enums/Dimension.h>
 #include <yoga/enums/Direction.h>
 #include <yoga/enums/Edge.h>
-#include <yoga/enums/FlexDirection.h>
+#include <yoga/enums/EnumsFlexDirection.h>
 #include <yoga/enums/PhysicalEdge.h>
 
 namespace facebook::yoga {
