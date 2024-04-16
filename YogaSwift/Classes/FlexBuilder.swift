@@ -7,36 +7,36 @@
 
 import Foundation
 
-public protocol Flexable {
-    var vNode: VirtualNode { get }
-}
-
-extension UIView: Flexable {
-    public var vNode: VirtualNode {
-        return self.flex
-    }
-}
-
-extension CALayer: Flexable {
-    public var vNode: VirtualNode {
-        return self.flex
-    }
-}
-
-extension VirtualNode: Flexable {
-    public var vNode: VirtualNode {
-        return self
-    }
-}
+//public protocol Flexable {
+//    var node: FlexSpec { get }
+//}
+//
+//extension UIView: Flexable {
+//    public var node: FlexSpec {
+//        return self.flexSpec
+//    }
+//}
+//
+//extension CALayer: Flexable {
+//    public var node: FlexSpec {
+//        return self.flexSpec
+//    }
+//}
+//
+//extension FlexSpec: Flexable {
+//    public var node: FlexSpec {
+//        return self
+//    }
+//}
 
 @resultBuilder
 public struct FlexBuilder {
     
-    public static func buildBlock(_ node: Flexable) -> [Flexable] {
+    public static func buildBlock(_ node: FlexSpec) -> [FlexSpec] {
         [node]
     }
     
-    public static func buildBlock(_ nodes: Flexable...) -> [Flexable] {
+    public static func buildBlock(_ nodes: FlexSpec...) -> [FlexSpec] {
         nodes
     }
     
@@ -44,24 +44,24 @@ public struct FlexBuilder {
 //        nodes
 //    }
     
-    public static func buildFunction(_ nodes: Flexable...) -> [Flexable] {
+    public static func buildFunction(_ nodes: FlexSpec...) -> [FlexSpec] {
         nodes
     }
 
-    public static func buildDo(_ nodes: Flexable...) -> [Flexable] {
+    public static func buildDo(_ nodes: FlexSpec...) -> [FlexSpec] {
         nodes
     }
 
-    public static func buildOptional(_ nodes: Flexable?...) -> [Flexable] {
+    public static func buildOptional(_ nodes: FlexSpec?...) -> [FlexSpec] {
         let result = nodes.compactMap { $0 }
         return result.isEmpty ? [] : result
     }
 
-    public static func buildEither(first: Flexable...) -> [Flexable] {
+    public static func buildEither(first: FlexSpec...) -> [FlexSpec] {
         first
     }
 
-    public static func buildEither(second: Flexable...) -> [Flexable] {
+    public static func buildEither(second: FlexSpec...) -> [FlexSpec] {
         second
     }
 }

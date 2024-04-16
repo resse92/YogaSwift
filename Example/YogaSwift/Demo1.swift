@@ -32,7 +32,7 @@ private class LeftView: BaseView {
         super.init(frame: frame)
         
         Column(self) {
-            self.imageViews[1].flex.grow(1)
+            self.imageViews[1].flexSpec.grow(1)
         }.alignItems(.stretch)
         
         self.imageViews[1].image = UIImage.p2
@@ -56,15 +56,15 @@ private class RightView: BaseView {
         super.init(frame: frame)
         
         Column(self) {
-            self.titleLabel.flex
+            self.titleLabel.flexSpec
             Row {
                 Column {
-                    self.subtitleLabel.flex.shrink(0)
+                    self.subtitleLabel.flexSpec.shrink(0)
                     
-                    self.imageViews[0].flex.marginTop(2).grow(1).aspectRatio(1).alignSelf(.center).shrink(1)
+                    self.imageViews[0].flexSpec.marginTop(2).grow(1).aspectRatio(1).alignSelf(.center).shrink(1)
                 }.alignItems(.stretch).justifyContent(.start).grow(1).width(50%).shrink(2)
                 
-                self.imageViews[1].flex.aspectRatio(1).marginLeft(10).alignSelf(.center).width(50%).shrink(2)
+                self.imageViews[1].flexSpec.aspectRatio(1).marginLeft(10).alignSelf(.center).width(50%).shrink(2)
             }.marginTop(4).grow(1).alignItems(.stretch).shrink(2)
         }.padding(10)
         self.imageViews[0].tag = 10
@@ -78,7 +78,6 @@ private class RightView: BaseView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-//        self.flex.layout()
     }
 }
 
@@ -104,10 +103,10 @@ class Demo1ViewController: UIViewController {
         
         Column(view) {
             Row {
-                self.left.flex.grow(1).shrink(2).width(50%)
+                self.left.flexSpec.grow(1).shrink(2).width(50%)
                 Column {
-                    self.rightTop.flex.grow(1).height(50%).shrink(2)
-                    self.rightBottom.flex.grow(1).marginTop(10).height(50%).shrink(2)
+                    self.rightTop.flexSpec.grow(1).height(50%).shrink(2)
+                    self.rightBottom.flexSpec.grow(1).marginTop(10).height(50%).shrink(2)
                 }
                 .alignItems(.stretch)
                 .grow(1)
@@ -125,7 +124,7 @@ class Demo1ViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.view.flex.layout()
+//        self.view.flex.layout()
         self.view.subviews.forEach { $0.backgroundColor = UIColor.white }
     }
 }

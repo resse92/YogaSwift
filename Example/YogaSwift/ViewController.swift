@@ -40,8 +40,10 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         Column(self.view) {
-            self.tableView.flex.grow(1).alignSelf(.stretch)
+            self.tableView.flexSpec.grow(1).alignSelf(.stretch)
         }
+        self.view.backgroundColor = .white
+//        self.view.setNeedsLayout()
     }
 
     override func didReceiveMemoryWarning() {
@@ -51,7 +53,7 @@ class ViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.view.flex.layout()
+//        self.view.flex.layout()
     }
 
 }

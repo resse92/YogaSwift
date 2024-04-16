@@ -6,7 +6,7 @@
 //
 
 public protocol Nodable: AnyObject {
-    var flex: VirtualNode { get }
+    var flexSpec: FlexSpec { get }
     var frame: CGRect { set get }
     func sizeThatFits(_ size: CGSize) -> CGSize
     func addSubItem(item: Nodable) -> Bool

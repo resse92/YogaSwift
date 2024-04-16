@@ -9,21 +9,20 @@ import UIKit
 
 private var flexLayoutAssociatedObjectHandle = 125_312_282_1
 
-
-
-class YogaSwiftUtil {
-    static func setup() {
-        
-    }
-}
-
 extension UIView: Nodable {
-    public var flex: VirtualNode {
-        if let flex = objc_getAssociatedObject(self, &flexLayoutAssociatedObjectHandle) as? VirtualNode {
+    
+    public var flexEnabled: Bool {
+        let obj = objc_getAssociatedObject(self, &flexLayoutAssociatedObjectHandle) as? FlexSpec
+        return obj != nil
+    }
+    
+    public var flexSpec: FlexSpec {
+        if let flex = objc_getAssociatedObject(self, &flexLayoutAssociatedObjectHandle) as? FlexSpec {
             return flex
         } else {
-            let flex = VirtualNode(self)
+            let flex = FlexSpec(self)
             objc_setAssociatedObject(self, &flexLayoutAssociatedObjectHandle, flex, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            self.translatesAutoresizingMaskIntoConstraints = false
             return flex
         }
     }
@@ -39,15 +38,20 @@ extension UIView: Nodable {
 }
 
 extension CALayer: Nodable {
+    public var flexEnabled: Bool {
+        let obj = objc_getAssociatedObject(self, &flexLayoutAssociatedObjectHandle) as? FlexSpec
+        return obj != nil
+    }
+    
     public func sizeThatFits(_ size: CGSize) -> CGSize {
         CGSize.zero
     }
     
-    public var flex: VirtualNode {
-        if let flex = objc_getAssociatedObject(self, &flexLayoutAssociatedObjectHandle) as? VirtualNode {
+    public var flexSpec: FlexSpec {
+        if let flex = objc_getAssociatedObject(self, &flexLayoutAssociatedObjectHandle) as? FlexSpec {
             return flex
         } else {
-            let flex = VirtualNode(self)
+            let flex = FlexSpec(self)
             objc_setAssociatedObject(self, &flexLayoutAssociatedObjectHandle, flex, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return flex
         }
@@ -62,15 +66,15 @@ extension CALayer: Nodable {
     }
 }
 
-public extension VirtualNode {
-    
-    @discardableResult
-    func addItem(_ view: UIView) -> VirtualNode {
-        self.addItem(view.flex)
-    }
-    
-    @discardableResult
-    func addItem(_ layer: CALayer) -> VirtualNode {
-        self.addItem(layer.flex)
-    }
-}
+//public extension VirtualNode {
+//    
+//    @discardableResult
+//    func addItem(_ view: UIView) -> VirtualNode {
+//        self.append(view.flex)
+//    }
+//    
+//    @discardableResult
+//    func addItem(_ layer: CALayer) -> VirtualNode {
+//        self.append(layer.flex)
+//    }
+//}

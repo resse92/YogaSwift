@@ -6,7 +6,7 @@
 //
 
 // MARK: Enums
-extension VirtualNode {
+extension FlexSpec {
     
     /**
      */
@@ -143,7 +143,7 @@ extension VirtualNode {
     }
 }
 
-extension VirtualNode.Direction {
+extension FlexSpec.Direction {
     var yogaValue: YGFlexDirection {
         switch self {
         case .column:        return YGFlexDirectionColumn
@@ -154,7 +154,7 @@ extension VirtualNode.Direction {
     }
 }
 
-extension VirtualNode.JustifyContent {
+extension FlexSpec.JustifyContent {
     var yogaValue: YGJustify {
         switch self {
         case .start:        return YGJustifyFlexStart
@@ -167,7 +167,7 @@ extension VirtualNode.JustifyContent {
     }
 }
 
-extension VirtualNode.AlignContent {
+extension FlexSpec.AlignContent {
     var yogaValue: YGAlign {
         switch self {
         case .stretch:      return YGAlignStretch
@@ -180,7 +180,7 @@ extension VirtualNode.AlignContent {
     }
 }
 
-extension VirtualNode.AlignItems {
+extension FlexSpec.AlignItems {
     var yogaValue: YGAlign {
         switch self {
         case .stretch:      return YGAlignStretch
@@ -192,7 +192,7 @@ extension VirtualNode.AlignItems {
     }
 }
 
-extension VirtualNode.AlignSelf {
+extension FlexSpec.AlignSelf {
     var yogaValue: YGAlign {
         switch self {
         case .auto:         return YGAlignAuto
@@ -205,7 +205,7 @@ extension VirtualNode.AlignSelf {
     }
 }
 
-extension VirtualNode.Wrap {
+extension FlexSpec.Wrap {
     var yogaValue: YGWrap {
         switch self {
         case .noWrap:      return YGWrapNoWrap
@@ -215,7 +215,7 @@ extension VirtualNode.Wrap {
     }
 }
 
-extension VirtualNode.Position {
+extension FlexSpec.Position {
     var yogaValue: YGPositionType {
         switch self {
         case .relative: return YGPositionTypeRelative
@@ -225,7 +225,7 @@ extension VirtualNode.Position {
     }
 }
 
-extension VirtualNode.LayoutDirection {
+extension FlexSpec.LayoutDirection {
     var yogaValue: YGDirection {
         switch self {
         case .ltr: return YGDirectionLTR
@@ -235,7 +235,7 @@ extension VirtualNode.LayoutDirection {
     }
 }
 
-extension VirtualNode.Display {
+extension FlexSpec.Display {
     var yogaValue: YGDisplay {
         switch self {
         case .flex: return YGDisplayFlex

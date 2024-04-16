@@ -7,7 +7,7 @@
 
 // MARK: - Flex Attributes
 
-public extension VirtualNode {
+public extension FlexSpec {
     @discardableResult
     func position(_ value: Position) -> Self {
         YGNodeStyleSetPositionType(self.ygNode, value.yogaValue)
@@ -76,7 +76,7 @@ public extension VirtualNode {
 }
 
 // MARK: - Margin
-extension VirtualNode {
+extension FlexSpec {
     @discardableResult
     public func marginTop(_ value: FlexValue) -> Self {
         YGNodeStyleSetMargin(self.ygNode, YGEdgeTop, value.float)
@@ -202,7 +202,7 @@ extension VirtualNode {
 }
 
 // MARK: - Padding
-extension VirtualNode {
+extension FlexSpec {
     @discardableResult
     public func paddingTop(_ value: FlexValue) -> Self {
         YGNodeStyleSetPadding(self.ygNode, YGEdgeTop, value.float)
@@ -331,7 +331,7 @@ extension VirtualNode {
 }
 
 // MARK: - Min/Max width/height
-extension VirtualNode {
+extension FlexSpec {
     @discardableResult
     public func minWidth(_ value: FlexValue) -> Self {
         YGNodeStyleSetMinWidth(self.ygNode, value.float)
@@ -407,14 +407,14 @@ extension VirtualNode {
      - Returns:
     */
     @discardableResult
-    public func aspectRatio(_ value: FlexValue) -> VirtualNode {
+    public func aspectRatio(_ value: FlexValue) -> FlexSpec {
         YGNodeStyleSetAspectRatio(self.ygNode, value.float)
         return self
     }
 }
 
 // MARK: - Size
-extension VirtualNode {
+extension FlexSpec {
 
     @discardableResult
     public func basis(_ value: FlexValue) -> Self {
@@ -484,7 +484,7 @@ extension VirtualNode {
 }
 
 // MARK: Absolute Margin
-public extension VirtualNode {
+public extension FlexSpec {
     
     @discardableResult
     func left(_ value: FlexValue) -> Self {

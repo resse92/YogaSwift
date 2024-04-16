@@ -12,9 +12,9 @@ import Foundation
 public func Row(
     _ node: Nodable? = nil,
     reversed: Bool = false,
-    @FlexBuilder content: () -> [Flexable]
-) -> VirtualNode {
-    (node?.flex ?? VirtualNode())
+    @FlexBuilder content: () -> [FlexSpec]
+) -> FlexSpec {
+    (node?.flexSpec ?? FlexSpec())
         .direction(reversed ? .rowReverse : .row)
         .build(content)
 }
@@ -24,33 +24,33 @@ public func Row(
 public func Column(
     _ node: Nodable? = nil,
     reversed: Bool = false,
-    @FlexBuilder content: () -> [Flexable]
-) -> VirtualNode {
-    (node?.flex ?? VirtualNode()).direction(reversed ? .columnReverse : .column)
+    @FlexBuilder content: () -> [FlexSpec]
+) -> FlexSpec {
+    let node = (node?.flexSpec ?? FlexSpec())
+    return node.direction(reversed ? .columnReverse : .column)
         .build(content)
 }
 
 @discardableResult
 public func Absolute(
     _ node: Nodable? = nil,
-    @FlexBuilder content: () -> [Flexable]
-) -> VirtualNode {
-    (node?.flex ?? VirtualNode()).position(.absolute)
+    @FlexBuilder content: () -> [FlexSpec]
+) -> FlexSpec {
+    (node?.flexSpec ?? FlexSpec()).position(.absolute)
         .build(content)
 }
-
 @discardableResult
 public func Static(
     _ node: Nodable? = nil,
-    @FlexBuilder content: () -> [Flexable]
-) -> VirtualNode {
-    (node?.flex ?? VirtualNode()).position(.static)
+    @FlexBuilder content: () -> [FlexSpec]
+) -> FlexSpec {
+    (node?.flexSpec ?? FlexSpec()).position(.static)
         .build(content)
 }
 
 
 
-extension VirtualNode {
+extension FlexSpec {
     convenience init(_ node: Nodable?) {
         self.init()
         if let node = node {
