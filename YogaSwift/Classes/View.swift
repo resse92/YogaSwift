@@ -35,6 +35,11 @@ extension UIView: Nodable {
         
         return self.layer.addSubItem(item: item)
     }
+    
+    public func removeFromParent() -> Bool {
+        self.removeFromSuperview()
+        return true
+    }
 }
 
 extension CALayer: Nodable {
@@ -63,6 +68,11 @@ extension CALayer: Nodable {
             return false // layer只加入到superLayer，不加入其它层级关系
         }
         return false
+    }
+    
+    public func removeFromParent() -> Bool {
+        self.removeFromSuperlayer()
+        return true
     }
 }
 

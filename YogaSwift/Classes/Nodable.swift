@@ -10,6 +10,8 @@ public protocol Nodable: AnyObject {
     var frame: CGRect { set get }
     func sizeThatFits(_ size: CGSize) -> CGSize
     func addSubItem(item: Nodable) -> Bool
+//    func removeItem(item: Nodable) -> Bool
+    func removeFromParent() -> Bool
 }
 
 extension Nodable {

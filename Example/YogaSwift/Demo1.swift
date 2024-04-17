@@ -67,6 +67,7 @@ private class RightView: BaseView {
                 self.imageViews[1].flexSpec.aspectRatio(1).marginLeft(10).alignSelf(.center).width(50%).shrink(2)
             }.marginTop(4).grow(1).alignItems(.stretch).shrink(2)
         }.padding(10)
+        
         self.imageViews[0].tag = 10
         self.imageViews[0].image = UIImage.p1
         self.imageViews[1].image = UIImage.p5
@@ -114,7 +115,7 @@ class Demo1ViewController: UIViewController {
                 .shrink(2)
                 .width(50%)
             }
-            .size(CGSize(width: 375, height: 263))
+            .size(CGSize(width: 375, height: 300))
             .padding(10)
             .alignItems(.stretch)
         }.alignItems(.center).justifyContent(.center)

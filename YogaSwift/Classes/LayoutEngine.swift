@@ -62,7 +62,7 @@ class CATransactionQueue<T: CATransactionQueueObserving>: LayoutRunloopQueue {
     }
     
     deinit {
-        assert(Thread.isMainThread, "must be in main thread")
+        __YogaSwiftAssertMainQueue()
         if let obs = _preTransactionObserver {
             CFRunLoopRemoveObserver(CFRunLoopGetMain(), obs, .commonModes)
         }
@@ -70,100 +70,65 @@ class CATransactionQueue<T: CATransactionQueueObserving>: LayoutRunloopQueue {
 }
 
 extension UIView {
-//    @objc
-//    func __yoga__layoutSubviews() {
-//        if self.flexEnabled {
-//            self.flex.layout(mode: .fitContainer)
-//        }
-//        __yoga__layoutSubviews()
-//    }
-    
     @objc
-    func __yoga_swift__setNeedsLayout() {
-        if self.flexEnabled {
-            self.flexSpec.markDirty()
-            var root = self.flexSpec
-            while let p = root.parent {
-                root = p
-            }
-            LayoutEngine.shared.transactionQueue.enqueue(obj: root)
-        }
-        self.__yoga_swift__setNeedsLayout()
-    }
-    
-    @objc
-    func __yoga_swift__layoutIfNeeded() {
-        if self.flexEnabled {
+    fileprivate func __yoga_swift__layoutSubviews() {
+        if self.flexEnabled && self.flexSpec.parent == nil  {
             self.flexSpec.layout()
         }
-        self.__yoga_swift__layoutIfNeeded()
+        __yoga_swift__layoutSubviews()
     }
-}
-
-extension UIViewController {
-    @objc
-    func __yoga__viewDidLayoutSubviews() {
-        if self.view.flexEnabled {
-            self.view.flexSpec.layout(mode: .fitContainer)
-        }
-        __yoga__viewDidLayoutSubviews()
-    }
+    
+//    @objc
+//    fileprivate func __yoga_swift__setNeedsLayout() {
+//        if self.flexEnabled {
+//            self.flexSpec.markDirty()
+//            var root = self.flexSpec
+//            while let p = root.parent {
+//                root = p
+//            }
+//            LayoutEngine.shared.transactionQueue.enqueue(obj: root)
+//        }
+//        self.__yoga_swift__setNeedsLayout()
+//    }
+//    
+//    @objc
+//    fileprivate func __yoga_swift__layoutIfNeeded() {
+//        if self.flexEnabled {
+//            self.flexSpec.layout()
+//        }
+//        self.__yoga_swift__layoutIfNeeded()
+//    }
 }
 
 extension CALayer {
     @objc
-    func __yoga__layoutSublayers() {
-        if self.flexEnabled {
+    fileprivate func __yoga_swift__layoutSublayers() {
+        if self.flexEnabled && self.flexSpec.parent == nil {
             self.flexSpec.layout()
         }
-        __yoga__layoutSublayers()
+        __yoga_swift__layoutSublayers()
     }
     
-    @objc
-    func __yoga_swift__setNeedsDisplay() {
-        self.__yoga_swift__displayIfNeeded()
-    }
-    
-    @objc
-    func __yoga_swift__displayIfNeeded() {
-        self.__yoga_swift__displayIfNeeded()
-    }
+//    @objc
+//    fileprivate func __yoga_swift__setNeedsDisplay() {
+//        self.__yoga_swift__displayIfNeeded()
+//    }
+//    
+//    @objc
+//    fileprivate func __yoga_swift__displayIfNeeded() {
+//        self.__yoga_swift__displayIfNeeded()
+//    }
 }
 
 public class LayoutEngine {
     static public let shared: LayoutEngine = LayoutEngine()
     
-    let transactionQueue = CATransactionQueue<FlexSpec>()
-    
     private init() { }
     
     public func setup() {
-//        YogaSwizzleInstanceMethod(UIView.self, #selector(UIView.layoutSubviews), #selector(UIView.__yoga__layoutSubviews))
-//        YogaSwizzleInstanceMethod(UIViewController.self, #selector(UIViewController.viewDidLayoutSubviews), #selector(UIViewController.__yoga__viewDidLayoutSubviews))
-//        YogaSwizzleInstanceMethod(CALayer.self, #selector(CALayer.layoutSublayers), #selector(CALayer.__yoga__layoutSublayers))
-        _ = transactionQueue
-        YogaSwizzleInstanceMethod(
-            UIView.self,
-            #selector(UIView.setNeedsLayout),
-            #selector(UIView.__yoga_swift__setNeedsLayout)
-        )
-        YogaSwizzleInstanceMethod(
-            UIView.self,
-            #selector(UIView.layoutIfNeeded),
-            #selector(UIView.__yoga_swift__layoutIfNeeded)
-        )
+        YogaSwizzleInstanceMethod(UIView.self, #selector(UIView.layoutSubviews), #selector(UIView.__yoga_swift__layoutSubviews))
         
-//        YogaSwizzleInstanceMethod(
-//            CALayer.self,
-//            #selector(CALayer.setNeedsDisplay),
-//            #selector(CALayer.__yoga_swift__setNeedsDisplay)
-//        )
-//        
-//        YogaSwizzleInstanceMethod(
-//            CALayer.self,
-//            #selector(CALayer.displayIfNeeded),
-//            #selector(CALayer.__yoga_swift__displayIfNeeded)
-//        )
+        YogaSwizzleInstanceMethod(CALayer.self, #selector(CALayer.layoutSublayers), #selector(CALayer.__yoga_swift__layoutSublayers))
         
     }
     
@@ -173,6 +138,4 @@ extension FlexSpec: CATransactionQueueObserving {
     func prepareForCATransactionCommit() {
         self.layout()
     }
-    
-    
 }

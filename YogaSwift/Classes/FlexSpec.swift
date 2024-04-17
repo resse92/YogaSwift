@@ -76,84 +76,81 @@ public final class FlexSpec {
 
 // MARK: -- children // TODO: need more
 extension FlexSpec {
+    
+    @discardableResult
+    private func add(node: Nodable?, to parent: Nodable?) -> Bool {
+        guard let node = node else {
+            return false
+        }
+        if self.obj == nil && self.parent?.obj == nil {
+            assert(true, "no superview to add, must check it")
+            return false
+        }
+        
+        let bool = self.obj?.addSubItem(item: node)
+        if bool != true {
+            return self.add(node: node, to: self.parent?.obj)
+        }
+        return true
+    }
+    
     @discardableResult
     final public func append(_ item: FlexSpec) -> FlexSpec {
         self.children.append(item)
+        YGNodeInsertChild(self.ygNode, item.ygNode, self.children.count - 1)
         item.parent = self
+        self.add(node: item.obj, to: self.obj)
         return item
     }
     
     @discardableResult
     final public func insert(_ item: FlexSpec, index: Int) -> FlexSpec {
+        assert(index < self.children.count, "index out of boundry")
         self.children.insert(item, at: index)
         item.parent = self
+        YGNodeInsertChild(self.ygNode, item.ygNode, index)
+        self.add(node: item.obj, to: self.obj)
         return item
+    }
+    
+    @discardableResult
+    final func removeFromParent() -> FlexSpec {
+        if let parent = self.parent {
+            parent.children.removeAll(where: { $0 == self })
+            _ = self.obj?.removeFromParent()
+            YGNodeRemoveChild(parent.ygNode, self.ygNode)
+        }
+        self.parent = nil
+        return self
     }
     
     @discardableResult
     final func build(@FlexBuilder _ builder: () -> [FlexSpec]) -> FlexSpec {
         let nodes = builder()
-        self.children.append(contentsOf: nodes)
-        nodes.forEach { $0.parent = self }
+        self.children.reserveCapacity(self.children.count + nodes.count)
+        nodes.forEach {
+            self.append($0)
+        }
         return self
     }
     
     @discardableResult
     final func build(@FlexBuilder _ builder: () -> FlexSpec) -> FlexSpec {
         let nodes = [builder()]
-        self.children.append(contentsOf: nodes)
-        nodes.forEach { $0.parent = self }
-        return self
-    }
-    
-    @discardableResult
-    final func remove(_ item: FlexSpec, at index: Int) -> FlexSpec? {
-        guard index < self.children.count else {
-            assert(false, "index out of element count")
-            return nil
+        self.children.reserveCapacity(self.children.count + nodes.count)
+        nodes.forEach {
+            self.append($0)
         }
-        let item = self.children.remove(at: index)
-        item.parent = nil
-        return item
-    }
-    
-    @discardableResult
-    final func popLast(_ item: FlexSpec, at index: Int) -> FlexSpec? {
-        let item = self.children.popLast()
-        item?.parent = nil
-        return item
+        return self
     }
 }
 
 // MARK: - Private Method
 private extension FlexSpec {
-    func tryReattachNodes(nodes: [FlexSpec]) {
-        if YGNodeGetChildCount(self.ygNode) != self.children.count {
-            YGNodeRemoveAllChildren(self.ygNode)
-        }
-        YGNodeRemoveAllChildren(self.ygNode)
-        nodes.enumerated().forEach { (offset, element) in
-            YGNodeInsertChild(self.ygNode, element.ygNode, Int(offset) )
-        }
-    }
     
-    func attachNodes() {
-        let node = self.ygNode
-        if self.isLeaf {
-            YGNodeRemoveAllChildren(node)
-            YGNodeSetMeasureFunc(node, FlexSpec.measureFunc)
-        } else {
-            YGNodeSetMeasureFunc(node, nil)
-            let subNodeToInclude = self.children.filter { $0.isEnabled }
-            
-            tryReattachNodes(nodes: subNodeToInclude)
-            subNodeToInclude.forEach({ $0.attachNodes() })
-        }
-    }
-    
-    // apply layout frame to each real item
+    // apply layout frame to each obj item
     func applyLayoutToObj(parent: CGRect?, parentItem: Nodable?) {
-        assert(Thread.isMainThread, "Flexbox setting frame should only be on the main thread")
+        __YogaSwiftAssertMainQueue()
         
         guard self.isEnabled else {
             return
@@ -162,7 +159,7 @@ private extension FlexSpec {
         var parentFrame = parent ?? CGRect.zero
         
         func roundPixelValue(_ value: CGFloat) -> CGFloat {
-            let rounds = screenScale * 100
+            let rounds = screenScale * 100 // 保留两位小数
             return round(value * rounds) / rounds
         }
         
@@ -250,18 +247,20 @@ public extension FlexSpec {
     
     @discardableResult
     final func calculateLayout(size: CGSize = CGSize.zero) -> CGSize {
-        self.attachNodes()
         if (self.alwaysDirty) {
             self.markDirty()
         }
-        YGNodeCalculateLayout(self.ygNode,
-                              Float(size.width),
-                              Float(size.height),
-                              YGNodeStyleGetDirection(self.ygNode))
+        YGNodeCalculateLayout(
+            self.ygNode,
+            Float(size.width),
+            Float(size.height),
+            YGNodeStyleGetDirection(self.ygNode)
+        )
         
-        return CGSize(width: CGFloat(YGNodeLayoutGetWidth(self.ygNode)),
-                      height: CGFloat(YGNodeLayoutGetHeight(self.ygNode)))
-        
+        return CGSize(
+            width: CGFloat(YGNodeLayoutGetWidth(self.ygNode)),
+            height: CGFloat(YGNodeLayoutGetHeight(self.ygNode))
+        )
     }
 }
 

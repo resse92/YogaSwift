@@ -41,7 +41,7 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         Column(self.view) {
             self.tableView.flexSpec.grow(1).alignSelf(.stretch)
-        }
+        }.size(UIScreen.main.bounds.size)
         self.view.backgroundColor = .white
 //        self.view.setNeedsLayout()
     }
@@ -53,7 +53,7 @@ class ViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-//        self.view.flex.layout()
+        self.view.flexSpec.layout()
     }
 
 }
