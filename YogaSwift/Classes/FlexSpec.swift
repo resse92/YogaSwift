@@ -36,7 +36,7 @@ public final class FlexSpec {
     
     private var context: Context?
     
-    weak var obj: Nodable?
+    weak var obj: (any Nodable)?
     
     public weak var parent: FlexSpec?
     var children = [FlexSpec]()
@@ -78,18 +78,17 @@ public final class FlexSpec {
 extension FlexSpec {
     
     @discardableResult
-    private func add(node: Nodable?, to parent: Nodable?) -> Bool {
+    private func add(node: (any Nodable)?, to parent: FlexSpec?) -> Bool {
+        guard let parent = parent else {
+            return false
+        }
         guard let node = node else {
             return false
-        }
-        if self.obj == nil && self.parent?.obj == nil {
-            assert(true, "no superview to add, must check it")
-            return false
-        }
+        }        
         
-        let bool = self.obj?.addSubItem(item: node)
+        let bool = parent.obj?.addSubItem(item: node)
         if bool != true {
-            return self.add(node: node, to: self.parent?.obj)
+            return self.add(node: node, to: parent.parent)
         }
         return true
     }
@@ -99,7 +98,7 @@ extension FlexSpec {
         self.children.append(item)
         YGNodeInsertChild(self.ygNode, item.ygNode, self.children.count - 1)
         item.parent = self
-        self.add(node: item.obj, to: self.obj)
+        self.add(node: item.obj, to: self)
         return item
     }
     
@@ -109,7 +108,7 @@ extension FlexSpec {
         self.children.insert(item, at: index)
         item.parent = self
         YGNodeInsertChild(self.ygNode, item.ygNode, index)
-        self.add(node: item.obj, to: self.obj)
+        self.add(node: item.obj, to: self)
         return item
     }
     
@@ -148,18 +147,37 @@ extension FlexSpec {
 // MARK: - Private Method
 private extension FlexSpec {
     
+    func findSameParent(point: CGPoint, obj: any Nodable, spec: FlexSpec) -> CGPoint {
+        if obj.flexSpec == spec {
+            return point
+        }
+        
+        guard let parent = spec.parent else {
+            assertionFailure("fatal error find same parent of spec and obj")
+            return .zero
+        }
+        return findSameParent(
+            point: CGPoint(x: spec.frame.minX + point.x, y: spec.frame.minY + point.y),
+            obj: obj,
+            spec: parent
+        )
+    }
+    
     // apply layout frame to each obj item
-    func applyLayoutToObj(parent: CGRect?, parentItem: Nodable?) {
+    func applyLayout(preserveOrigin: Bool) {
         __YogaSwiftAssertMainQueue()
         
         guard self.isEnabled else {
             return
         }
         
-        var parentFrame = parent ?? CGRect.zero
+        var origin = CGPoint.zero
+        if let parentObj = self.obj?.parent, let parentSpec = self.parent {
+            origin = findSameParent(point: origin, obj: parentObj, spec: parentSpec)
+        }
         
         func roundPixelValue(_ value: CGFloat) -> CGFloat {
-            let rounds = screenScale * 100 // 保留两位小数
+            let rounds = screenScale * 100
             return round(value * rounds) / rounds
         }
         
@@ -173,33 +191,21 @@ private extension FlexSpec {
             y: CGFloat(YGNodeLayoutGetHeight(self.ygNode)) + topLeft.y
         )
         
-        let left = parentFrame.minX + roundPixelValue(topLeft.x)
-        let top = parentFrame.minY + roundPixelValue(topLeft.y)
+        let left = origin.x + roundPixelValue(topLeft.x)
+        let top = origin.y + roundPixelValue(topLeft.y)
         
         let width = roundPixelValue(bottomRight.x - topLeft.x)
         let height = roundPixelValue(bottomRight.y - topLeft.y)
         
-        let frame = CGRect(x: left, y: top, width: width, height: height)
+        let frame = CGRect(x: preserveOrigin ? 0 : left, y: preserveOrigin ? 0 : top, width: width, height: height)
         
-        var shouldUseCurrentCoordinator = false
-        
-        parentFrame = frame
         if let real = self.obj {
-            if !self.isRoot {
-                real.frame = frame
-            }
-            
-            if parentItem == nil || parentItem?.addSubItem(item: real) == true {
-                parentFrame = CGRect.zero
-                shouldUseCurrentCoordinator = true
-            }
+            real.frame = frame
         }
         
         if !self.isLeaf {
             self.children.forEach {
-                $0.applyLayoutToObj(
-                    parent: parentFrame,
-                    parentItem: (shouldUseCurrentCoordinator ? self.obj : nil) ?? parentItem)
+                $0.applyLayout(preserveOrigin: false)
             }
         }
     }
@@ -208,7 +214,7 @@ private extension FlexSpec {
 /// MARK: - layout
 public extension FlexSpec {
     
-    func layout(mode: LayoutMode = .fitContainer, syncFrame: Bool = true) {
+    func layout(mode: LayoutMode = .fitContainer, applyLayout: Bool = true) {
         var width = Float.greatestFiniteMagnitude
         var height = Float.greatestFiniteMagnitude
         
@@ -224,8 +230,8 @@ public extension FlexSpec {
         }
         
         self.calculateLayout(size: CGSize(width: width, height: height))
-        if syncFrame {
-            self.applyLayoutToObj(parent: self.obj?.frame, parentItem: nil)
+        if applyLayout {
+            self.applyLayout(preserveOrigin: true)
         }
     }
     

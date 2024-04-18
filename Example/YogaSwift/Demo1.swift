@@ -99,10 +99,12 @@ class Demo1ViewController: UIViewController {
         return view
     }()
     
+    let container = UIView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        Column(view) {
+        Column(container) {
             Row {
                 self.left.flexSpec.grow(1).shrink(2).width(50%)
                 Column {
@@ -119,13 +121,14 @@ class Demo1ViewController: UIViewController {
             .padding(10)
             .alignItems(.stretch)
         }.alignItems(.center).justifyContent(.center)
+        self.view.addSubview(container)
 
         self.view.backgroundColor = UIColor(0xf5f5f5)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-//        self.view.flex.layout()
+        self.container.flexSpec.width(self.view.frame.width).layout(mode: .adjustHeight)
         self.view.subviews.forEach { $0.backgroundColor = UIColor.white }
     }
 }

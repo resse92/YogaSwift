@@ -11,9 +11,13 @@ private var flexLayoutAssociatedObjectHandle = 125_312_282_1
 
 extension UIView: Nodable {
     
-    public var flexEnabled: Bool {
+    var flexEnabled: Bool {
         let obj = objc_getAssociatedObject(self, &flexLayoutAssociatedObjectHandle) as? FlexSpec
         return obj != nil
+    }
+    
+    public var parent: (any Nodable)? {
+        self.superview
     }
     
     public var flexSpec: FlexSpec {
@@ -27,7 +31,7 @@ extension UIView: Nodable {
         }
     }
     
-    public func addSubItem(item: Nodable) -> Bool {
+    public func addSubItem(item: any Nodable) -> Bool {
         if let view = item as? UIView {
             self.addSubview(view)
             return true
@@ -43,7 +47,7 @@ extension UIView: Nodable {
 }
 
 extension CALayer: Nodable {
-    public var flexEnabled: Bool {
+    var flexEnabled: Bool {
         let obj = objc_getAssociatedObject(self, &flexLayoutAssociatedObjectHandle) as? FlexSpec
         return obj != nil
     }
@@ -62,7 +66,11 @@ extension CALayer: Nodable {
         }
     }
     
-    public func addSubItem(item: Nodable) -> Bool {
+    public var parent: (any Nodable)? {
+        self.superlayer
+    }
+    
+    public func addSubItem(item: any Nodable) -> Bool {
         if let layer = item as? CALayer {
             self.addSublayer(layer)
             return false // layer只加入到superLayer，不加入其它层级关系

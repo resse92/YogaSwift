@@ -8,24 +8,8 @@
 public protocol Nodable: AnyObject {
     var flexSpec: FlexSpec { get }
     var frame: CGRect { set get }
+    var parent: (any Nodable)? { get }
     func sizeThatFits(_ size: CGSize) -> CGSize
-    func addSubItem(item: Nodable) -> Bool
-//    func removeItem(item: Nodable) -> Bool
+    func addSubItem(item: any Nodable) -> Bool
     func removeFromParent() -> Bool
-}
-
-extension Nodable {
-    
-//    func addSubItem(item: Nodable) -> Bool {
-//        return false
-//    }
-//    
-//    func sizeThatFits(_ size: CGSize) -> CGSize {
-//        return CGSize.zero
-//    }
-//    
-//    var frame: CGRect {
-//        set {}
-//        get { return self.flex.frame }
-//    }
 }
