@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import OSLog
 
 private let screenScale = UIScreen.main.scale
 
@@ -74,21 +75,25 @@ public final class FlexSpec {
     }
 }
 
-// MARK: -- children // TODO: need more
+// MARK: -- children
 extension FlexSpec {
     
     @discardableResult
-    private func add(node: (any Nodable)?, to parent: FlexSpec?) -> Bool {
+    private func add(spec: FlexSpec?, to parent: FlexSpec?) -> Bool {
         guard let parent = parent else {
             return false
         }
-        guard let node = node else {
-            return false
-        }        
         
-        let bool = parent.obj?.addSubItem(item: node)
+        guard let subObj = spec?.obj else {
+            spec?.children.forEach({ spec in
+                add(spec: spec, to: parent)
+            })
+            return true
+        }
+        
+        let bool = parent.obj?.addSubItem(item: subObj) == true
         if bool != true {
-            return self.add(node: node, to: parent.parent)
+            return self.add(spec: spec, to: parent.parent)
         }
         return true
     }
@@ -98,7 +103,7 @@ extension FlexSpec {
         self.children.append(item)
         YGNodeInsertChild(self.ygNode, item.ygNode, self.children.count - 1)
         item.parent = self
-        self.add(node: item.obj, to: self)
+        self.add(spec: item, to: self)
         return item
     }
     
@@ -108,7 +113,7 @@ extension FlexSpec {
         self.children.insert(item, at: index)
         item.parent = self
         YGNodeInsertChild(self.ygNode, item.ygNode, index)
-        self.add(node: item.obj, to: self)
+        self.add(spec: item, to: self)
         return item
     }
     
@@ -146,23 +151,6 @@ extension FlexSpec {
 
 // MARK: - Private Method
 private extension FlexSpec {
-    
-    func findSameParent(point: CGPoint, obj: any Nodable, spec: FlexSpec) -> CGPoint {
-        if obj.flexSpec == spec {
-            return point
-        }
-        
-        guard let parent = spec.parent else {
-            assertionFailure("fatal error find same parent of spec and obj")
-            return .zero
-        }
-        return findSameParent(
-            point: CGPoint(x: spec.frame.minX + point.x, y: spec.frame.minY + point.y),
-            obj: obj,
-            spec: parent
-        )
-    }
-    
     // apply layout frame to each obj item
     func applyLayout(preserveOrigin: Bool) {
         __YogaSwiftAssertMainQueue()
@@ -171,36 +159,33 @@ private extension FlexSpec {
             return
         }
         
-        var origin = CGPoint.zero
-        if let parentObj = self.obj?.parent, let parentSpec = self.parent {
-            origin = findSameParent(point: origin, obj: parentObj, spec: parentSpec)
-        }
-        
-        func roundPixelValue(_ value: CGFloat) -> CGFloat {
-            let rounds = screenScale * 100
-            return round(value * rounds) / rounds
-        }
-        
-        let topLeft = CGPoint(
-            x: CGFloat(YGNodeLayoutGetLeft(self.ygNode)),
-            y: CGFloat(YGNodeLayoutGetTop(self.ygNode))
-        )
-        
-        let bottomRight = CGPoint(
-            x: CGFloat(YGNodeLayoutGetWidth(self.ygNode)) + topLeft.x,
-            y: CGFloat(YGNodeLayoutGetHeight(self.ygNode)) + topLeft.y
-        )
-        
-        let left = origin.x + roundPixelValue(topLeft.x)
-        let top = origin.y + roundPixelValue(topLeft.y)
-        
-        let width = roundPixelValue(bottomRight.x - topLeft.x)
-        let height = roundPixelValue(bottomRight.y - topLeft.y)
-        
-        let frame = CGRect(x: preserveOrigin ? 0 : left, y: preserveOrigin ? 0 : top, width: width, height: height)
-        
-        if let real = self.obj {
-            real.frame = frame
+        // apply frame to obj
+        if let obj = self.obj {
+            let origin = findAncestorDistance(spec: self)
+            
+            let topLeft = CGPoint(
+                x: CGFloat(YGNodeLayoutGetLeft(self.ygNode)),
+                y: CGFloat(YGNodeLayoutGetTop(self.ygNode))
+            )
+            
+            let bottomRight = CGPoint(
+                x: CGFloat(YGNodeLayoutGetWidth(self.ygNode)) + topLeft.x,
+                y: CGFloat(YGNodeLayoutGetHeight(self.ygNode)) + topLeft.y
+            )
+            
+            let left = origin.x + topLeft.x
+            let top = origin.y + topLeft.y
+            
+            let width = bottomRight.x - topLeft.x
+            let height = bottomRight.y - topLeft.y
+            
+            let frame = CGRect(
+                origin: preserveOrigin ? obj.frame.origin : .init(x: top, y: left),
+                size: .init(width: width, height: height)
+            )
+            
+            obj.frame = frame
+            print(obj, obj.frame)
         }
         
         if !self.isLeaf {
@@ -312,22 +297,42 @@ extension FlexSpec: Equatable {
     public static func == (lhs: FlexSpec, rhs: FlexSpec) -> Bool {
         let node1 = lhs.ygNode
         let node2 = rhs.ygNode
+        #warning("this is not done")
         guard YGNodeGetChildCount(node1) == YGNodeGetChildCount(node2) else {
             return false
         }
-        
         return node1 == node2
     }
 }
 
-private extension CGRect {
-    init(x: Float, y: Float, width: Float, height: Float) {
-        self.init(x: CGFloat(x), y: CGFloat(y), width: CGFloat(width), height: CGFloat(height))
-    }
+private func roundPixelValue(_ value: CGFloat) -> CGFloat {
+    let rounds = screenScale
+    let v = round(value * rounds) / rounds
+    return round(v * 100) / 100
 }
 
-private extension CGSize {
-    init(width: Float, height: Float) {
-        self.init(width: CGFloat(width), height: CGFloat(height))
+private func findAncestorDistance(spec: FlexSpec) -> CGPoint {
+    guard let parent = spec.obj?.parent, let parentSpec = spec.parent else {
+        return .zero
     }
+    
+    func findAncestorDistance(point: CGPoint, obj: any Nodable, spec: FlexSpec) -> CGPoint {
+        if obj.flexSpec == spec {
+            return point
+        }
+        
+        guard let parent = spec.parent else {
+            assertionFailure("fatal error find same parent of spec and obj")
+            return .zero
+        }
+        
+        return findAncestorDistance(
+            point: CGPoint(x: spec.frame.minX + point.x, y: spec.frame.minY + point.y),
+            obj: obj,
+            spec: parent
+        )
+    }
+    
+    return findAncestorDistance(point: .zero, obj: parent, spec: parentSpec)
+    
 }

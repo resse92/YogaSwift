@@ -62,3 +62,15 @@ extension Int: FlexValue {
         return Float(self)
     }
 }
+
+extension CGRect {
+    init(x: Float, y: Float, width: Float, height: Float) {
+        self.init(x: CGFloat(x), y: CGFloat(y), width: CGFloat(width), height: CGFloat(height))
+    }
+}
+
+extension CGSize {
+    init(width: Float, height: Float) {
+        self.init(width: CGFloat(width), height: CGFloat(height))
+    }
+}
