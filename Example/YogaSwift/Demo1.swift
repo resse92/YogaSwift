@@ -45,9 +45,7 @@ private class LeftView: BaseView {
 
 class ImageView: UIImageView {
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        let size = super.sizeThatFits(size)
-        print(size)
-        return size
+        super.sizeThatFits(size)
     }
 }
 
@@ -75,10 +73,6 @@ private class RightView: BaseView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
     }
 }
 
@@ -129,7 +123,13 @@ class Demo1ViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         self.container.flexSpec.width(self.view.frame.width).layout(mode: .adjustHeight)
+        
+        container.center = self.view.center
         self.view.subviews.forEach { $0.backgroundColor = UIColor.white }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
 }
 

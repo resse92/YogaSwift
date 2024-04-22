@@ -39,12 +39,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-//        Column(self.view) {
-//            self.tableView.flexSpec.grow(1).alignSelf(.stretch)
-//        }
+
         self.view.backgroundColor = .white
         self.view.addSubview(self.tableView)
-//        self.view.setNeedsLayout()
     }
 
     override func didReceiveMemoryWarning() {

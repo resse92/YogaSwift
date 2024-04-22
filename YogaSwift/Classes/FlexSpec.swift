@@ -14,13 +14,13 @@ private let screenScale = UIScreen.main.scale
 public final class FlexSpec {
     
     private class Context {
-        weak var node: FlexSpec?
-        init(_ node: FlexSpec) {
-            self.node = node
+        weak var spec: FlexSpec?
+        init(_ spec: FlexSpec) {
+            self.spec = spec
         }
         
         func sizeThatFits(_ size: CGSize) -> CGSize {
-            self.node?.obj?.sizeThatFits(size) ?? .zero
+            self.spec?.obj?.sizeThatFits(size) ?? .zero
         }
     }
     
@@ -37,7 +37,7 @@ public final class FlexSpec {
     
     private var context: Context?
     
-    weak var obj: (any Nodable)?
+    weak var obj: (any ViewType)?
     
     public weak var parent: FlexSpec?
     var children = [FlexSpec]()
@@ -53,7 +53,7 @@ public final class FlexSpec {
     }
     
     var isLeaf: Bool {
-        isEnabled && self.children.contains(where: { $0.isEnabled }) == false
+        isEnabled && self.children.filter({ $0.isEnabled }).isEmpty
     }
     
     var isRoot: Bool {
@@ -79,31 +79,10 @@ public final class FlexSpec {
 extension FlexSpec {
     
     @discardableResult
-    private func add(spec: FlexSpec?, to parent: FlexSpec?) -> Bool {
-        guard let parent = parent else {
-            return false
-        }
-        
-        guard let subObj = spec?.obj else {
-            spec?.children.forEach({ spec in
-                add(spec: spec, to: parent)
-            })
-            return true
-        }
-        
-        let bool = parent.obj?.addSubItem(item: subObj) == true
-        if bool != true {
-            return self.add(spec: spec, to: parent.parent)
-        }
-        return true
-    }
-    
-    @discardableResult
     final public func append(_ item: FlexSpec) -> FlexSpec {
         self.children.append(item)
         YGNodeInsertChild(self.ygNode, item.ygNode, self.children.count - 1)
         item.parent = self
-        self.add(spec: item, to: self)
         return item
     }
     
@@ -112,8 +91,6 @@ extension FlexSpec {
         assert(index < self.children.count, "index out of boundry")
         self.children.insert(item, at: index)
         item.parent = self
-        YGNodeInsertChild(self.ygNode, item.ygNode, index)
-        self.add(spec: item, to: self)
         return item
     }
     
@@ -161,7 +138,7 @@ private extension FlexSpec {
         
         // apply frame to obj
         if let obj = self.obj {
-            let origin = findAncestorDistance(spec: self)
+            let parentOrigin = findAncestorDistance(spec: self)
             
             let topLeft = CGPoint(
                 x: CGFloat(YGNodeLayoutGetLeft(self.ygNode)),
@@ -173,19 +150,19 @@ private extension FlexSpec {
                 y: CGFloat(YGNodeLayoutGetHeight(self.ygNode)) + topLeft.y
             )
             
-            let left = origin.x + topLeft.x
-            let top = origin.y + topLeft.y
+            let left = topLeft.x
+            let top = topLeft.y
             
+            let origin = CGPoint(x: left, y: top).applying(.init(translationX: parentOrigin.x, y: parentOrigin.y))
             let width = bottomRight.x - topLeft.x
             let height = bottomRight.y - topLeft.y
             
             let frame = CGRect(
-                origin: preserveOrigin ? obj.frame.origin : .init(x: top, y: left),
+                origin: preserveOrigin ? obj.frame.origin : origin,
                 size: .init(width: width, height: height)
             )
             
             obj.frame = frame
-            print(obj, obj.frame)
         }
         
         if !self.isLeaf {
@@ -214,6 +191,7 @@ public extension FlexSpec {
             height = Float.nan
         }
         
+        Self.attachNodesFromHierachy(spec: self)
         self.calculateLayout(size: CGSize(width: width, height: height))
         if applyLayout {
             self.applyLayout(preserveOrigin: true)
@@ -257,6 +235,46 @@ public extension FlexSpec {
 
 // MARK: static function
 extension FlexSpec {
+    /// add current obj to parent, if self.obj == nil, find child to add
+    private static func add(spec: FlexSpec?, to parent: FlexSpec?) {
+        guard let parentObj = parent?.obj else { //
+            return
+        }
+        if let obj = spec?.obj {
+            _ = parentObj.addSubItem(item: obj)
+        } else {
+            spec?.children.forEach { subspec in
+                add(spec: subspec, to: parent)
+            }
+        }
+        return
+    }
+    
+    private static func attachNodesFromHierachy(spec: FlexSpec) {
+        if spec.isLeaf {
+            YGNodeRemoveAllChildren(spec.ygNode)
+            YGNodeSetMeasureFunc(spec.ygNode, measureFunc)
+        } else {
+            YGNodeSetMeasureFunc(spec.ygNode, nil)
+                        
+            for (index, child) in spec.children.enumerated() {
+                let ygChild = YGNodeGetChild(spec.ygNode, index)
+                if ygChild == child.ygNode {
+                    continue
+                }
+                YGNodeInsertChild(spec.ygNode, child.ygNode, index)
+            }
+        }
+        spec.children.forEach { child in
+            attachNodesFromHierachy(spec: child)
+        }
+        
+        
+        if spec.isRoot == false {
+            add(spec: spec, to: spec.parent)
+        }
+    }
+    
     private static let measureFunc: YGMeasureFunc = { (node, width, widthMode, height, heightMode) in
         let constrainedWidth = widthMode == YGMeasureModeUndefined ? Float.greatestFiniteMagnitude : width
         let constrainedHeight = heightMode == YGMeasureModeUndefined ? Float.greatestFiniteMagnitude: height
@@ -316,7 +334,7 @@ private func findAncestorDistance(spec: FlexSpec) -> CGPoint {
         return .zero
     }
     
-    func findAncestorDistance(point: CGPoint, obj: any Nodable, spec: FlexSpec) -> CGPoint {
+    func findAncestorDistance(point: CGPoint, obj: any ViewType, spec: FlexSpec) -> CGPoint {
         if obj.flexSpec == spec {
             return point
         }
@@ -334,5 +352,4 @@ private func findAncestorDistance(spec: FlexSpec) -> CGPoint {
     }
     
     return findAncestorDistance(point: .zero, obj: parent, spec: parentSpec)
-    
 }

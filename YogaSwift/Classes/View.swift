@@ -9,14 +9,14 @@ import UIKit
 
 private var flexLayoutAssociatedObjectHandle = 125_312_282_1
 
-extension UIView: Nodable {
+extension UIView: ViewType {
     
     var flexEnabled: Bool {
         let obj = objc_getAssociatedObject(self, &flexLayoutAssociatedObjectHandle) as? FlexSpec
         return obj != nil
     }
     
-    public var parent: (any Nodable)? {
+    public var parent: (any ViewType)? {
         self.superview
     }
     
@@ -31,8 +31,8 @@ extension UIView: Nodable {
         }
     }
     
-    public func addSubItem(item: any Nodable) -> Bool {
-        if let view = item as? UIView {
+    public func addSubItem(item: any ViewType) -> Bool {
+        if let view = item as? UIView, view.superview != self {
             self.addSubview(view)
             return true
         }
@@ -44,9 +44,13 @@ extension UIView: Nodable {
         self.removeFromSuperview()
         return true
     }
+    
+    public func didCalculateLayout() {
+        
+    }
 }
 
-extension CALayer: Nodable {
+extension CALayer: ViewType {
     var flexEnabled: Bool {
         let obj = objc_getAssociatedObject(self, &flexLayoutAssociatedObjectHandle) as? FlexSpec
         return obj != nil
@@ -66,12 +70,12 @@ extension CALayer: Nodable {
         }
     }
     
-    public var parent: (any Nodable)? {
+    public var parent: (any ViewType)? {
         self.superlayer
     }
     
-    public func addSubItem(item: any Nodable) -> Bool {
-        if let layer = item as? CALayer {
+    public func addSubItem(item: any ViewType) -> Bool {
+        if let layer = item as? CALayer, layer.superlayer != self {
             self.addSublayer(layer)
             return false // layer只加入到superLayer，不加入其它层级关系
         }
@@ -82,17 +86,8 @@ extension CALayer: Nodable {
         self.removeFromSuperlayer()
         return true
     }
+    
+    public func didCalculateLayout() {
+        
+    }
 }
-
-//public extension VirtualNode {
-//    
-//    @discardableResult
-//    func addItem(_ view: UIView) -> VirtualNode {
-//        self.append(view.flex)
-//    }
-//    
-//    @discardableResult
-//    func addItem(_ layer: CALayer) -> VirtualNode {
-//        self.append(layer.flex)
-//    }
-//}

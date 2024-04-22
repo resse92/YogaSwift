@@ -7,10 +7,10 @@
 
 import Foundation
 
-// Horizontal Flex default: VirtualNode().direction(.row)
+// Horizontal Flex default: FlexSpec().direction(.row)
 @discardableResult
 public func Row(
-    _ node: (any Nodable)? = nil,
+    _ node: (any ViewType)? = nil,
     reversed: Bool = false,
     @FlexBuilder content: () -> [FlexSpec]
 ) -> FlexSpec {
@@ -19,39 +19,41 @@ public func Row(
         .build(content)
 }
 
-// Vertical Flex default: VirtualNode().direction(.column)
+// Vertical Flex default: FlexSpec().direction(.column)
 @discardableResult
 public func Column(
-    _ node: (any Nodable)? = nil,
+    _ node: (any ViewType)? = nil,
     reversed: Bool = false,
     @FlexBuilder content: () -> [FlexSpec]
 ) -> FlexSpec {
-    let node = (node?.flexSpec ?? FlexSpec())
-    return node.direction(reversed ? .columnReverse : .column)
+    (node?.flexSpec ?? FlexSpec())
+        .direction(reversed ? .columnReverse : .column)
         .build(content)
 }
 
 @discardableResult
 public func Absolute(
-    _ node: (any Nodable)? = nil,
+    _ node: (any ViewType)? = nil,
     @FlexBuilder content: () -> [FlexSpec]
 ) -> FlexSpec {
-    (node?.flexSpec ?? FlexSpec()).position(.absolute)
+    (node?.flexSpec ?? FlexSpec())
+        .position(.absolute)
         .build(content)
 }
 @discardableResult
 public func Static(
-    _ node: (any Nodable)? = nil,
+    _ node: (any ViewType)? = nil,
     @FlexBuilder content: () -> [FlexSpec]
 ) -> FlexSpec {
-    (node?.flexSpec ?? FlexSpec()).position(.static)
+    (node?.flexSpec ?? FlexSpec())
+        .position(.static)
         .build(content)
 }
 
 
 
 extension FlexSpec {
-    convenience init(_ node: (any Nodable)?) {
+    convenience init(_ node: (any ViewType)?) {
         self.init()
         if let node = node {
             obj = node
