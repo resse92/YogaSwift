@@ -10,13 +10,16 @@ import UIKit
 import YogaSwift
 
 enum DemoEnums: String, CaseIterable {
-    case Demo1
+    case demo1
+    case demo2
     
     func vc() -> UIViewController {
         let vc: UIViewController
         switch self {
-        case .Demo1:
+        case .demo1:
             vc = Demo1ViewController()
+        case .demo2:
+            vc = Demo2.ViewController()
         }
         vc.title = self.rawValue
         return vc

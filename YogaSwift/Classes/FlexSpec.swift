@@ -42,8 +42,6 @@ public final class FlexSpec {
     public weak var parent: FlexSpec?
     var children = [FlexSpec]()
     
-    // Mark as alwaysDirty means that calculate this node's frame every time
-    var alwaysDirty = false
     public var isEnabled = true
     
     required init() {
@@ -176,7 +174,8 @@ private extension FlexSpec {
 /// MARK: - layout
 public extension FlexSpec {
     
-    func layout(mode: LayoutMode = .fitContainer, applyLayout: Bool = true) {
+    @discardableResult
+    func layout(mode: LayoutMode = .fitContainer, applyLayout: Bool = true) -> CGSize {
         var width = Float.greatestFiniteMagnitude
         var height = Float.greatestFiniteMagnitude
         
@@ -190,12 +189,12 @@ public extension FlexSpec {
         } else if case .adjustHeight = mode {
             height = Float.nan
         }
-        
-        Self.attachNodesFromHierachy(spec: self)
+                
         self.calculateLayout(size: CGSize(width: width, height: height))
         if applyLayout {
             self.applyLayout(preserveOrigin: true)
         }
+        return CGSize(width: YGNodeLayoutGetWidth(self.ygNode), height: YGNodeLayoutGetHeight(self.ygNode))
     }
     
     func markDirty() {
@@ -208,17 +207,10 @@ public extension FlexSpec {
     var dirty: Bool {
         YGNodeIsDirty(self.ygNode)
     }
-    
-    func alwaysDirty(_ isDirty: Bool) -> FlexSpec {
-        self.alwaysDirty = isDirty
-        return self
-    }
-    
+        
     @discardableResult
     final func calculateLayout(size: CGSize = CGSize.zero) -> CGSize {
-        if (self.alwaysDirty) {
-            self.markDirty()
-        }
+        Self.attachNodesFromHierachy(spec: self)
         YGNodeCalculateLayout(
             self.ygNode,
             Float(size.width),
@@ -315,11 +307,10 @@ extension FlexSpec: Equatable {
     public static func == (lhs: FlexSpec, rhs: FlexSpec) -> Bool {
         let node1 = lhs.ygNode
         let node2 = rhs.ygNode
-        #warning("this is not done")
         guard YGNodeGetChildCount(node1) == YGNodeGetChildCount(node2) else {
             return false
         }
-        return node1 == node2
+        return node1 == node2 && lhs.children == rhs.children
     }
 }
 

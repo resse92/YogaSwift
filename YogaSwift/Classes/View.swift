@@ -26,7 +26,6 @@ extension UIView: ViewType {
         } else {
             let flex = FlexSpec(self)
             objc_setAssociatedObject(self, &flexLayoutAssociatedObjectHandle, flex, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            self.translatesAutoresizingMaskIntoConstraints = false
             return flex
         }
     }
