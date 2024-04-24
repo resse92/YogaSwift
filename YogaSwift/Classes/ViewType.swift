@@ -18,7 +18,3 @@ public protocol ViewType: AnyObject {
     
     func didCalculateLayout()
 }
-
-func __YogaSwiftAssertMainQueue() {
-    assert(Thread.isMainThread, "The function must run in main queue")
-}

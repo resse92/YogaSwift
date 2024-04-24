@@ -26,13 +26,17 @@ extension Demo2 {
         override func loadView() {
             super.loadView()
             self.view = tableView
-            
-            self.datasources = [Int](100...1000).map { String(randomOfLength: $0) }
         }
         
         override func viewDidLoad() {
             super.viewDidLoad()
             self.view.backgroundColor = .white
+            DispatchQueue.global().async {
+                self.datasources = [Int](100...1000).map { String(randomOfLength: $0) }
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            }
         }
     }
 }
@@ -51,8 +55,11 @@ extension Demo2.ViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let time = CFAbsoluteTimeGetCurrent()
         tempCell.label.text = self.datasources[indexPath.row]
+        tempCell.label.flexSpec.markDirty()
         let size = tempCell.contentView.flexSpec.calculateLayout(size: CGSize(width: tableView.frame.width, height: .nan))
+        print("耗时: \((CFAbsoluteTimeGetCurrent() - time) * 1000)ms")
         return size.height
     }
 }

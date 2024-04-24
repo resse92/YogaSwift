@@ -201,6 +201,7 @@ public extension FlexSpec {
         if !self.isLeaf {
             return
         }
+        YGNodeSetMeasureFunc(self.ygNode, FlexSpec.measureFunc)
         YGNodeMarkDirty(self.ygNode)
     }
     
