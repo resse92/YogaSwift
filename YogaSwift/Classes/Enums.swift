@@ -2,12 +2,11 @@
 //  FlexEnum.swift
 //  Flexbox
 //
-//  Created by AlexZHU on 2020/6/4.
+//  Created by resse on 2020/6/4.
 //
-import yoga
 
 // MARK: Enums
-extension VirtualNode {
+extension FlexSpec {
     
     /**
      */
@@ -106,6 +105,8 @@ extension VirtualNode {
         case relative
         // Positioned absolutely in regards to its container. The item is positionned using properties top, bottom, left, right, start, end.
         case absolute
+        
+        case `static`
     }
     
     /**
@@ -142,102 +143,103 @@ extension VirtualNode {
     }
 }
 
-extension VirtualNode.Direction {
+extension FlexSpec.Direction {
     var yogaValue: YGFlexDirection {
         switch self {
-        case .column:        return YGFlexDirection.column
-        case .columnReverse: return YGFlexDirection.columnReverse
-        case .row:           return YGFlexDirection.row
-        case .rowReverse:    return YGFlexDirection.rowReverse
+        case .column:        return YGFlexDirectionColumn
+        case .columnReverse: return YGFlexDirectionColumnReverse
+        case .row:           return YGFlexDirectionRow
+        case .rowReverse:    return YGFlexDirectionRowReverse
         }
     }
 }
 
-extension VirtualNode.JustifyContent {
+extension FlexSpec.JustifyContent {
     var yogaValue: YGJustify {
         switch self {
-        case .start:        return YGJustify.flexStart
-        case .center:       return YGJustify.center
-        case .end:          return YGJustify.flexEnd
-        case .spaceBetween: return YGJustify.spaceBetween
-        case .spaceAround:  return YGJustify.spaceAround
-        case .spaceEvenly:  return YGJustify.spaceEvenly
+        case .start:        return YGJustifyFlexStart
+        case .center:       return YGJustifyCenter
+        case .end:          return YGJustifyFlexEnd
+        case .spaceBetween: return YGJustifySpaceBetween
+        case .spaceAround:  return YGJustifySpaceAround
+        case .spaceEvenly:  return YGJustifySpaceEvenly
         }
     }
 }
 
-extension VirtualNode.AlignContent {
+extension FlexSpec.AlignContent {
     var yogaValue: YGAlign {
         switch self {
-        case .stretch:      return YGAlign.stretch
-        case .start:        return YGAlign.flexStart
-        case .center:       return YGAlign.center
-        case .end:          return YGAlign.flexEnd
-        case .spaceBetween: return YGAlign.spaceBetween
-        case .spaceAround:  return YGAlign.spaceAround
+        case .stretch:      return YGAlignStretch
+        case .start:        return YGAlignFlexStart
+        case .center:       return YGAlignCenter
+        case .end:          return YGAlignFlexEnd
+        case .spaceBetween: return YGAlignSpaceBetween
+        case .spaceAround:  return YGAlignSpaceAround
         }
     }
 }
 
-extension VirtualNode.AlignItems {
+extension FlexSpec.AlignItems {
     var yogaValue: YGAlign {
         switch self {
-        case .stretch:      return YGAlign.stretch
-        case .start:        return YGAlign.flexStart
-        case .center:       return YGAlign.center
-        case .end:          return YGAlign.flexEnd
-        case .baseline:     return YGAlign.baseline
+        case .stretch:      return YGAlignStretch
+        case .start:        return YGAlignFlexStart
+        case .center:       return YGAlignCenter
+        case .end:          return YGAlignFlexEnd
+        case .baseline:     return YGAlignBaseline
         }
     }
 }
 
-extension VirtualNode.AlignSelf {
+extension FlexSpec.AlignSelf {
     var yogaValue: YGAlign {
         switch self {
-        case .auto:         return YGAlign.auto
-        case .stretch:      return YGAlign.stretch
-        case .start:        return YGAlign.flexStart
-        case .center:       return YGAlign.center
-        case .end:          return YGAlign.flexEnd
-        case .baseline:     return YGAlign.baseline
+        case .auto:         return YGAlignAuto
+        case .stretch:      return YGAlignStretch
+        case .start:        return YGAlignFlexStart
+        case .center:       return YGAlignCenter
+        case .end:          return YGAlignFlexEnd
+        case .baseline:     return YGAlignBaseline
         }
     }
 }
 
-extension VirtualNode.Wrap {
+extension FlexSpec.Wrap {
     var yogaValue: YGWrap {
         switch self {
-        case .noWrap:      return YGWrap.noWrap
-        case .wrap:        return YGWrap.wrap
-        case .wrapReverse: return YGWrap.wrapReverse
+        case .noWrap:      return YGWrapNoWrap
+        case .wrap:        return YGWrapWrap
+        case .wrapReverse: return YGWrapWrapReverse
         }
     }
 }
 
-extension VirtualNode.Position {
+extension FlexSpec.Position {
     var yogaValue: YGPositionType {
         switch self {
-        case .relative: return YGPositionType.relative
-        case .absolute: return YGPositionType.absolute
+        case .relative: return YGPositionTypeRelative
+        case .absolute: return YGPositionTypeAbsolute
+        case .static: return YGPositionTypeStatic
         }
     }
 }
 
-extension VirtualNode.LayoutDirection {
+extension FlexSpec.LayoutDirection {
     var yogaValue: YGDirection {
         switch self {
-        case .ltr: return YGDirection.LTR
-        case .rtl: return YGDirection.RTL
-        default:   return YGDirection.inherit
+        case .ltr: return YGDirectionLTR
+        case .rtl: return YGDirectionRTL
+        default:   return YGDirectionInherit
         }
     }
 }
 
-extension VirtualNode.Display {
+extension FlexSpec.Display {
     var yogaValue: YGDisplay {
         switch self {
-        case .flex: return YGDisplay.flex
-        case .none: return YGDisplay.none
+        case .flex: return YGDisplayFlex
+        case .none: return YGDisplayNone
         }
     }
 }

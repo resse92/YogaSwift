@@ -20,9 +20,22 @@ it, simply add the following line to your Podfile:
 pod 'YogaSwift'
 ```
 
+## yoga
+
+yoga version 3.0.3
+change some file name, because this will caused cocoapods duplicated uuid:
+1. enums/Align.h -> enums/EnumsAligh.h
+2. enums/FlexDirection.h -> enums/EnumsFlexDirection.h
+
+## ROADMAP
+
+[ ] PositionStatic
+[ ] baseline related
+[ ] log
+
 ## Author
 
-zhuruliang, zrl920825@hotmail.com
+resse, zrljp12@gmail.com
 
 ## License
 

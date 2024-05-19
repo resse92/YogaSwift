@@ -10,13 +10,16 @@ import UIKit
 import YogaSwift
 
 enum DemoEnums: String, CaseIterable {
-    case Demo1
+    case demo1
+    case demo2
     
     func vc() -> UIViewController {
         let vc: UIViewController
         switch self {
-        case .Demo1:
+        case .demo1:
             vc = Demo1ViewController()
+        case .demo2:
+            vc = Demo2.ViewController()
         }
         vc.title = self.rawValue
         return vc
@@ -39,9 +42,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        Column(self.view).build {
-            self.tableView.flex.grow(1).alignSelf(.stretch)
-        }
+
+        self.view.backgroundColor = .white
+        self.view.addSubview(self.tableView)
     }
 
     override func didReceiveMemoryWarning() {
@@ -51,7 +54,8 @@ class ViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.view.flex.layout()
+//        self.view.flexSpec.layout()
+        self.tableView.frame = self.view.bounds
     }
 
 }

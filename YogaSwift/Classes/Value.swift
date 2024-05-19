@@ -2,7 +2,7 @@
 //  Percent.swift
 //  Flexbox
 //
-//  Created by AlexZHU on 2020/6/5.
+//  Created by resse on 2020/6/5.
 //
 
 import UIKit
@@ -60,5 +60,17 @@ extension CGFloat: FlexValue {
 extension Int: FlexValue {
     public var float: Float {
         return Float(self)
+    }
+}
+
+extension CGRect {
+    init(x: Float, y: Float, width: Float, height: Float) {
+        self.init(x: CGFloat(x), y: CGFloat(y), width: CGFloat(width), height: CGFloat(height))
+    }
+}
+
+extension CGSize {
+    init(width: Float, height: Float) {
+        self.init(width: CGFloat(width), height: CGFloat(height))
     }
 }

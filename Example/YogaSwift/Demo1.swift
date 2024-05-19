@@ -31,9 +31,9 @@ private class LeftView: BaseView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        Column(self).alignItems(.stretch).build {
-            self.imageViews[1].flex.grow(1)
-        }
+        Column(self) {
+            self.imageViews[1].flexSpec.grow(1)
+        }.alignItems(.stretch)
         
         self.imageViews[1].image = UIImage.p2
     }
@@ -45,9 +45,7 @@ private class LeftView: BaseView {
 
 class ImageView: UIImageView {
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        let size = super.sizeThatFits(size)
-        print(size)
-        return size
+        super.sizeThatFits(size)
     }
 }
 
@@ -55,21 +53,19 @@ private class RightView: BaseView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        Column(self).padding(10).build {
-            self.titleLabel.flex
-            
-            Row().marginTop(4).grow(1).alignItems(.stretch).shrink(2)
-                .build {
-                    Column().alignItems(.stretch).justifyContent(.start).grow(1).width(50%).shrink(2)
-                        .build {
-                            self.subtitleLabel.flex.shrink(0)
-                            
-                            self.imageViews[0].flex.marginTop(2).grow(1).aspectRatio(1).alignSelf(.center).shrink(1)
-                        }
+        Column(self) {
+            self.titleLabel.flexSpec
+            Row {
+                Column {
+                    self.subtitleLabel.flexSpec.shrink(0)
                     
-                    self.imageViews[1].flex.aspectRatio(1).marginLeft(10).alignSelf(.center).width(50%).shrink(2)
-                }
-        }
+                    self.imageViews[0].flexSpec.marginTop(2).grow(1).aspectRatio(1).alignSelf(.center).shrink(1)
+                }.alignItems(.stretch).justifyContent(.start).grow(1).width(50%).shrink(2)
+                
+                self.imageViews[1].flexSpec.aspectRatio(1).marginLeft(10).alignSelf(.center).width(50%).shrink(2)
+            }.marginTop(4).grow(1).alignItems(.stretch).shrink(2)
+        }.padding(10)
+        
         self.imageViews[0].tag = 10
         self.imageViews[0].image = UIImage.p1
         self.imageViews[1].image = UIImage.p5
@@ -77,11 +73,6 @@ private class RightView: BaseView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-//        self.flex.layout()
     }
 }
 
@@ -102,27 +93,43 @@ class Demo1ViewController: UIViewController {
         return view
     }()
     
+    let container = UIView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        Column(view).alignItems(.center).justifyContent(.center).build {
-            Row().padding(10).alignItems(.stretch).build {
-                self.left.flex.grow(1).shrink(2).width(50%)
-                Column().alignItems(.stretch).grow(1).marginLeft(10).shrink(2).width(50%)
-                    .build {
-                        self.rightTop.flex.grow(1).height(50%).shrink(2)
-                        self.rightBottom.flex.grow(1).marginTop(10).height(50%).shrink(2)
-                    }
-            }.size(CGSize(width: 375, height: 263))
-        }
-        
+        Column(container) {
+            Row {
+                self.left.flexSpec.grow(1).shrink(2).width(50%)
+                Column {
+                    self.rightTop.flexSpec.grow(1).height(50%).shrink(2)
+                    self.rightBottom.flexSpec.grow(1).marginTop(10).height(50%).shrink(2)
+                }
+                .alignItems(.stretch)
+                .grow(1)
+                .marginLeft(10)
+                .shrink(2)
+                .width(50%)
+            }
+            .size(CGSize(width: 375, height: 300))
+            .padding(10)
+            .alignItems(.stretch)
+        }.alignItems(.center).justifyContent(.center)
+        self.view.addSubview(container)
+
         self.view.backgroundColor = UIColor(0xf5f5f5)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.view.flex.layout()
+        self.container.flexSpec.width(self.view.frame.width).layout(mode: .adjustHeight)
+        
+        container.center = self.view.center
         self.view.subviews.forEach { $0.backgroundColor = UIColor.white }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
 }
 

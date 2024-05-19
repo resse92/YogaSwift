@@ -2,13 +2,12 @@
 //  Flex.swift
 //  Flexbox
 //
-//  Created by AlexZHU on 2020/6/19.
+//  Created by resse on 2020/6/19.
 //
 
 // MARK: - Flex Attributes
-import yoga
 
-public extension VirtualNode {
+public extension FlexSpec {
     @discardableResult
     func position(_ value: Position) -> Self {
         YGNodeStyleSetPositionType(self.ygNode, value.yogaValue)
@@ -77,99 +76,99 @@ public extension VirtualNode {
 }
 
 // MARK: - Margin
-extension VirtualNode {
+extension FlexSpec {
     @discardableResult
     public func marginTop(_ value: FlexValue) -> Self {
-        YGNodeStyleSetMargin(self.ygNode, YGEdge.top, value.float)
+        YGNodeStyleSetMargin(self.ygNode, YGEdgeTop, value.float)
         return self
     }
     @discardableResult
     public func marginLeft(_ value: FlexValue) -> Self {
-        YGNodeStyleSetMargin(self.ygNode, YGEdge.left, value.float)
+        YGNodeStyleSetMargin(self.ygNode, YGEdgeLeft, value.float)
         return self
     }
 
     @discardableResult
     public func marginBottom(_ value: FlexValue) -> Self {
-        YGNodeStyleSetMargin(self.ygNode, YGEdge.bottom, value.float)
+        YGNodeStyleSetMargin(self.ygNode, YGEdgeBottom, value.float)
         return self
     }
     
     @discardableResult
     public func marginRight(_ value: FlexValue) -> Self {
-        YGNodeStyleSetMargin(self.ygNode, YGEdge.right, value.float)
+        YGNodeStyleSetMargin(self.ygNode, YGEdgeRight, value.float)
         return self
     }
     
     @discardableResult
     public func marginTop(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetMarginPercent(self.ygNode, YGEdge.top, percent.value())
+        YGNodeStyleSetMarginPercent(self.ygNode, YGEdgeTop, percent.value())
         return self
     }
     
     @discardableResult
     public func marginLeft(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetMarginPercent(self.ygNode, YGEdge.left, percent.value())
+        YGNodeStyleSetMarginPercent(self.ygNode, YGEdgeLeft, percent.value())
         return self
     }
     
     @discardableResult
     public func marginBottom(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetMarginPercent(self.ygNode, YGEdge.bottom, percent.value())
+        YGNodeStyleSetMarginPercent(self.ygNode, YGEdgeBottom, percent.value())
         return self
     }
     
     @discardableResult
     public func marginRight(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetMarginPercent(self.ygNode, YGEdge.right, percent.value())
+        YGNodeStyleSetMarginPercent(self.ygNode, YGEdgeRight, percent.value())
         return self
     }
 
     @discardableResult
     public func marginStart(_ value: FlexValue) -> Self {
-        YGNodeStyleSetMargin(self.ygNode, YGEdge.start, value.float)
+        YGNodeStyleSetMargin(self.ygNode, YGEdgeStart, value.float)
         return self
     }
     
     @discardableResult
     public func marginEnd(_ value: FlexValue) -> Self {
-        YGNodeStyleSetMargin(self.ygNode, YGEdge.end, value.float)
+        YGNodeStyleSetMargin(self.ygNode, YGEdgeEnd, value.float)
         return self
     }
     
     @discardableResult
     public func marginStart(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetMarginPercent(self.ygNode, YGEdge.start, percent.value())
+        YGNodeStyleSetMarginPercent(self.ygNode, YGEdgeStart, percent.value())
         return self
     }
     
     @discardableResult
     public func marginEnd(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetMarginPercent(self.ygNode, YGEdge.end, percent.value())
+        YGNodeStyleSetMarginPercent(self.ygNode, YGEdgeEnd, percent.value())
         return self
     }
     
     @discardableResult
     public func marginHorizontal(_ value: FlexValue) -> Self {
-        YGNodeStyleSetMargin(self.ygNode, YGEdge.horizontal, value.float)
+        YGNodeStyleSetMargin(self.ygNode, YGEdgeHorizontal, value.float)
         return self
     }
     
     @discardableResult
     public func marginHorizontal(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetMarginPercent(self.ygNode, YGEdge.horizontal, percent.value())
+        YGNodeStyleSetMarginPercent(self.ygNode, YGEdgeHorizontal, percent.value())
         return self
     }
     
     @discardableResult
     public func marginVertical(_ value: FlexValue) -> Self {
-        YGNodeStyleSetMargin(self.ygNode, YGEdge.vertical, value.float)
+        YGNodeStyleSetMargin(self.ygNode, YGEdgeVertical, value.float)
         return self
     }
     
     @discardableResult
     public func marginVertical(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetMarginPercent(self.ygNode, YGEdge.vertical, percent.value())
+        YGNodeStyleSetMarginPercent(self.ygNode, YGEdgeVertical, percent.value())
         return self
     }
     
@@ -203,100 +202,100 @@ extension VirtualNode {
 }
 
 // MARK: - Padding
-extension VirtualNode {
+extension FlexSpec {
     @discardableResult
     public func paddingTop(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPadding(self.ygNode, YGEdge.top, value.float)
+        YGNodeStyleSetPadding(self.ygNode, YGEdgeTop, value.float)
         return self
     }
     
     @discardableResult
     public func paddingLeft(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPadding(self.ygNode, YGEdge.left, value.float)
+        YGNodeStyleSetPadding(self.ygNode, YGEdgeLeft, value.float)
         return self
     }
 
     @discardableResult
     public func paddingBottom(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPadding(self.ygNode, YGEdge.bottom, value.float)
+        YGNodeStyleSetPadding(self.ygNode, YGEdgeBottom, value.float)
         return self
     }
     
     @discardableResult
     public func paddingRight(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPadding(self.ygNode, YGEdge.right, value.float)
+        YGNodeStyleSetPadding(self.ygNode, YGEdgeRight, value.float)
         return self
     }
     
     @discardableResult
     public func paddingTop(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdge.top, percent.value())
+        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdgeTop, percent.value())
         return self
     }
     
     @discardableResult
     public func paddingLeft(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdge.left, percent.value())
+        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdgeLeft, percent.value())
         return self
     }
     
     @discardableResult
     public func paddingBottom(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdge.bottom, percent.value())
+        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdgeBottom, percent.value())
         return self
     }
     
     @discardableResult
     public func paddingRight(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdge.right, percent.value())
+        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdgeRight, percent.value())
         return self
     }
 
     @discardableResult
     public func paddingStart(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPadding(self.ygNode, YGEdge.start, value.float)
+        YGNodeStyleSetPadding(self.ygNode, YGEdgeStart, value.float)
         return self
     }
     
     @discardableResult
     public func paddingEnd(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPadding(self.ygNode, YGEdge.end, value.float)
+        YGNodeStyleSetPadding(self.ygNode, YGEdgeEnd, value.float)
         return self
     }
     
     @discardableResult
     public func paddingStart(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdge.start, percent.value())
+        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdgeStart, percent.value())
         return self
     }
     
     @discardableResult
     public func paddingEnd(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdge.end, percent.value())
+        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdgeEnd, percent.value())
         return self
     }
     
     @discardableResult
     public func paddingHorizontal(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPadding(self.ygNode, YGEdge.horizontal, value.float)
+        YGNodeStyleSetPadding(self.ygNode, YGEdgeHorizontal, value.float)
         return self
     }
     
     @discardableResult
     public func paddingHorizontal(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdge.horizontal, percent.value())
+        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdgeHorizontal, percent.value())
         return self
     }
     
     @discardableResult
     public func paddingVertical(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPadding(self.ygNode, YGEdge.vertical, value.float)
+        YGNodeStyleSetPadding(self.ygNode, YGEdgeVertical, value.float)
         return self
     }
     
     @discardableResult
     public func paddingVertical(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdge.vertical, percent.value())
+        YGNodeStyleSetPaddingPercent(self.ygNode, YGEdgeVertical, percent.value())
         return self
     }
     
@@ -332,7 +331,7 @@ extension VirtualNode {
 }
 
 // MARK: - Min/Max width/height
-extension VirtualNode {
+extension FlexSpec {
     @discardableResult
     public func minWidth(_ value: FlexValue) -> Self {
         YGNodeStyleSetMinWidth(self.ygNode, value.float)
@@ -408,14 +407,14 @@ extension VirtualNode {
      - Returns:
     */
     @discardableResult
-    public func aspectRatio(_ value: FlexValue) -> VirtualNode {
+    public func aspectRatio(_ value: FlexValue) -> FlexSpec {
         YGNodeStyleSetAspectRatio(self.ygNode, value.float)
         return self
     }
 }
 
 // MARK: - Size
-extension VirtualNode {
+extension FlexSpec {
 
     @discardableResult
     public func basis(_ value: FlexValue) -> Self {
@@ -485,53 +484,53 @@ extension VirtualNode {
 }
 
 // MARK: Absolute Margin
-public extension VirtualNode {
+public extension FlexSpec {
     
     @discardableResult
     func left(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPosition(self.ygNode, YGEdge.left, value.float)
+        YGNodeStyleSetPosition(self.ygNode, YGEdgeLeft, value.float)
         return self
     }
     
     @discardableResult
     func top(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPosition(self.ygNode, YGEdge.top, value.float)
+        YGNodeStyleSetPosition(self.ygNode, YGEdgeTop, value.float)
         return self
     }
     
     @discardableResult
     func bottom(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPosition(self.ygNode, YGEdge.bottom, value.float)
+        YGNodeStyleSetPosition(self.ygNode, YGEdgeBottom, value.float)
         return self
     }
     
     @discardableResult
     func right(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPosition(self.ygNode, YGEdge.right, value.float)
+        YGNodeStyleSetPosition(self.ygNode, YGEdgeRight, value.float)
         return self
     }
     
     @discardableResult
     func start(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPosition(self.ygNode, YGEdge.start, value.float)
+        YGNodeStyleSetPosition(self.ygNode, YGEdgeStart, value.float)
         return self
     }
     
     @discardableResult
     func end(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPosition(self.ygNode, YGEdge.end, value.float)
+        YGNodeStyleSetPosition(self.ygNode, YGEdgeEnd, value.float)
         return self
     }
     
     @discardableResult
     func horizontally(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPosition(self.ygNode, YGEdge.horizontal, value.float)
+        YGNodeStyleSetPosition(self.ygNode, YGEdgeHorizontal, value.float)
         return self
     }
     
     @discardableResult
     func vertically(_ value: FlexValue) -> Self {
-        YGNodeStyleSetPosition(self.ygNode, YGEdge.vertical, value.float)
+        YGNodeStyleSetPosition(self.ygNode, YGEdgeVertical, value.float)
         return self
     }
     
@@ -543,47 +542,47 @@ public extension VirtualNode {
 
     @discardableResult
     func left(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPositionPercent(self.ygNode, YGEdge.left, percent.value())
+        YGNodeStyleSetPositionPercent(self.ygNode, YGEdgeLeft, percent.value())
         return self
     }
         
     @discardableResult
     func top(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPositionPercent(self.ygNode, YGEdge.top, percent.value())
+        YGNodeStyleSetPositionPercent(self.ygNode, YGEdgeTop, percent.value())
         return self
     }
     @discardableResult
     func bottom(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPositionPercent(self.ygNode, YGEdge.bottom, percent.value())
+        YGNodeStyleSetPositionPercent(self.ygNode, YGEdgeBottom, percent.value())
         return self
     }
     
     @discardableResult
     func right(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPositionPercent(self.ygNode, YGEdge.right, percent.value())
+        YGNodeStyleSetPositionPercent(self.ygNode, YGEdgeRight, percent.value())
         return self
     }
     
     @discardableResult
     func start(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPositionPercent(self.ygNode, YGEdge.start, percent.value())
+        YGNodeStyleSetPositionPercent(self.ygNode, YGEdgeStart, percent.value())
         return self
     }
     
     @discardableResult
     func end(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPositionPercent(self.ygNode, YGEdge.end, percent.value())
+        YGNodeStyleSetPositionPercent(self.ygNode, YGEdgeEnd, percent.value())
         return self
     }
     
     @discardableResult
     func horizontally(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPositionPercent(self.ygNode, YGEdge.horizontal, percent.value())
+        YGNodeStyleSetPositionPercent(self.ygNode, YGEdgeHorizontal, percent.value())
         return self
     }
     @discardableResult
     func vertically(_ percent: FlexPercent) -> Self {
-        YGNodeStyleSetPositionPercent(self.ygNode, YGEdge.vertical, percent.value())
+        YGNodeStyleSetPositionPercent(self.ygNode, YGEdgeVertical, percent.value())
         return self
     }
     

@@ -1,52 +1,27 @@
 PODS:
-  - FBSnapshotTestCase (2.1.4):
-    - FBSnapshotTestCase/SwiftSupport (= 2.1.4)
-  - FBSnapshotTestCase/Core (2.1.4)
-  - FBSnapshotTestCase/SwiftSupport (2.1.4):
-    - FBSnapshotTestCase/Core
-  - LookinServer (1.0.0)
-  - Nimble (7.3.4)
-  - Nimble-Snapshots (6.3.0):
-    - Nimble-Snapshots/Core (= 6.3.0)
-  - Nimble-Snapshots/Core (6.3.0):
-    - FBSnapshotTestCase (~> 2.0)
-    - Nimble (~> 7.0)
-  - Quick (1.2.0)
-  - Yoga (1.14.0)
-  - YogaSwift (0.0.1):
-    - Yoga
+  - LookinServer (1.2.8):
+    - LookinServer/Core (= 1.2.8)
+  - LookinServer/Core (1.2.8)
+  - YogaSwift/core (0.0.1)
+  - YogaSwift/yoga (0.0.1)
 
 DEPENDENCIES:
-  - FBSnapshotTestCase (~> 2.1.4)
   - LookinServer
-  - Nimble (~> 7.0)
-  - Nimble-Snapshots (~> 6.3.0)
-  - Quick (~> 1.2.0)
-  - Yoga
-  - YogaSwift (from `../`)
+  - YogaSwift/core (from `../`)
+  - YogaSwift/yoga (from `../`)
 
 SPEC REPOS:
   trunk:
-    - FBSnapshotTestCase
     - LookinServer
-    - Nimble
-    - Nimble-Snapshots
-    - Quick
-    - Yoga
 
 EXTERNAL SOURCES:
   YogaSwift:
     :path: "../"
 
 SPEC CHECKSUMS:
-  FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
-  LookinServer: 0002891cd3cec5e082a910e897dfe71b4f06b89e
-  Nimble: 051e3d8912d40138fa5591c78594f95fb172af37
-  Nimble-Snapshots: f5459b5b091678dc942d03ec4741cacb58ba4a52
-  Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08
-  Yoga: cff67a400f6b74dc38eb0bad4f156673d9aa980c
-  YogaSwift: c925c7b2d3193e075fb6de13c8016b0a68d8c0a8
+  LookinServer: 1b2b61c6402ae29fa22182d48f5cd067b4e99e80
+  YogaSwift: d29422b3cdf1c4b915a1fde2f6b12f71127a2f53
 
-PODFILE CHECKSUM: 9ea245fc4ff418196039023f91b60292e5e35640
+PODFILE CHECKSUM: a51c433b7c27a21a2e8d64270f3c75827cbb6b36
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.15.2

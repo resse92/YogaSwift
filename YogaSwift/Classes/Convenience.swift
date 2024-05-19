@@ -2,31 +2,61 @@
 //  Convenience.swift
 //  Flexbox
 //
-//  Created by AlexZHU on 2020/9/8.
+//  Created by resse on 2020/9/8.
 //
 
 import Foundation
 
-// Flex default: VirtualNode()
-public func AFlex(_ node: Nodable? = nil) -> VirtualNode {
-    return VirtualNode(node)
+// Horizontal Flex default: FlexSpec().direction(.row)
+@discardableResult
+public func Row(
+    _ node: (any ViewType)? = nil,
+    reversed: Bool = false,
+    @FlexBuilder content: () -> [FlexSpec]
+) -> FlexSpec {
+    (node?.flexSpec ?? FlexSpec())
+        .direction(reversed ? .rowReverse : .row)
+        .build(content)
 }
 
-// Horizontal Flex default: VirtualNode().direction(.row)
-public func Row(_ node: Nodable? = nil, reversed: Bool = false) -> VirtualNode {
-    (node?.flex ?? AFlex(node)).direction(reversed ? .rowReverse : .row)
+// Vertical Flex default: FlexSpec().direction(.column)
+@discardableResult
+public func Column(
+    _ node: (any ViewType)? = nil,
+    reversed: Bool = false,
+    @FlexBuilder content: () -> [FlexSpec]
+) -> FlexSpec {
+    (node?.flexSpec ?? FlexSpec())
+        .direction(reversed ? .columnReverse : .column)
+        .build(content)
 }
 
-// Vertical Flex default: VirtualNode().direction(.column)
-public func Column(_ node: Nodable? = nil, reversed: Bool = false) -> VirtualNode {
-    (node?.flex ?? AFlex(node)).direction(reversed ? .columnReverse : .column)
+@discardableResult
+public func Absolute(
+    _ node: (any ViewType)? = nil,
+    @FlexBuilder content: () -> [FlexSpec]
+) -> FlexSpec {
+    (node?.flexSpec ?? FlexSpec())
+        .position(.absolute)
+        .build(content)
+}
+@discardableResult
+public func Static(
+    _ node: (any ViewType)? = nil,
+    @FlexBuilder content: () -> [FlexSpec]
+) -> FlexSpec {
+    (node?.flexSpec ?? FlexSpec())
+        .position(.static)
+        .build(content)
 }
 
-extension VirtualNode {
-    public convenience init(_ node: Nodable?) {
+
+
+extension FlexSpec {
+    convenience init(_ node: (any ViewType)?) {
         self.init()
         if let node = node {
-            real = node
+            obj = node
         }
     }
 }
