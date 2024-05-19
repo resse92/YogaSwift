@@ -10,7 +10,7 @@ import Foundation
 // Horizontal Flex default: FlexSpec().direction(.row)
 @discardableResult
 public func Row(
-    _ node: (any ViewType)? = nil,
+    _ node: (any Flexable)? = nil,
     reversed: Bool = false,
     @FlexBuilder content: () -> [FlexSpec]
 ) -> FlexSpec {
@@ -22,7 +22,7 @@ public func Row(
 // Vertical Flex default: FlexSpec().direction(.column)
 @discardableResult
 public func Column(
-    _ node: (any ViewType)? = nil,
+    _ node: (any Flexable)? = nil,
     reversed: Bool = false,
     @FlexBuilder content: () -> [FlexSpec]
 ) -> FlexSpec {
@@ -33,7 +33,7 @@ public func Column(
 
 @discardableResult
 public func Absolute(
-    _ node: (any ViewType)? = nil,
+    _ node: (any Flexable)? = nil,
     @FlexBuilder content: () -> [FlexSpec]
 ) -> FlexSpec {
     (node?.flexSpec ?? FlexSpec())
@@ -42,7 +42,7 @@ public func Absolute(
 }
 @discardableResult
 public func Static(
-    _ node: (any ViewType)? = nil,
+    _ node: (any Flexable)? = nil,
     @FlexBuilder content: () -> [FlexSpec]
 ) -> FlexSpec {
     (node?.flexSpec ?? FlexSpec())
@@ -53,7 +53,7 @@ public func Static(
 
 
 extension FlexSpec {
-    convenience init(_ node: (any ViewType)?) {
+    convenience init(_ node: (any Flexable)?) {
         self.init()
         if let node = node {
             obj = node

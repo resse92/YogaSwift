@@ -37,7 +37,7 @@ public final class FlexSpec {
     
     private var context: Context?
     
-    weak var obj: (any ViewType)?
+    weak var obj: (any Flexable)?
     
     public weak var parent: FlexSpec?
     var children = [FlexSpec]()
@@ -326,7 +326,7 @@ private func findAncestorDistance(spec: FlexSpec) -> CGPoint {
         return .zero
     }
     
-    func findAncestorDistance(point: CGPoint, obj: any ViewType, spec: FlexSpec) -> CGPoint {
+    func findAncestorDistance(point: CGPoint, obj: any Flexable, spec: FlexSpec) -> CGPoint {
         if obj.flexSpec == spec {
             return point
         }
