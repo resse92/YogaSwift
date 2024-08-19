@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import OSLog
 
 private let screenScale = UIScreen.main.scale
 
@@ -20,7 +19,7 @@ public final class FlexSpec {
         }
         
         func sizeThatFits(_ size: CGSize) -> CGSize {
-            self.spec?.obj?.sizeThatFits(size) ?? .zero
+            self.spec?.owningView?.sizeThatFits(size) ?? .zero
         }
     }
     
@@ -37,7 +36,7 @@ public final class FlexSpec {
     
     private var context: Context?
     
-    weak var obj: (any Flexable)?
+    weak var owningView: (any Flexable)?
     
     public weak var parent: FlexSpec?
     var children = [FlexSpec]()
@@ -96,7 +95,7 @@ extension FlexSpec {
     final func removeFromParent() -> FlexSpec {
         if let parent = self.parent {
             parent.children.removeAll(where: { $0 == self })
-            _ = self.obj?.removeFromParent()
+            _ = self.owningView?.removeFromParent()
             YGNodeRemoveChild(parent.ygNode, self.ygNode)
         }
         self.parent = nil
@@ -124,104 +123,102 @@ extension FlexSpec {
     }
 }
 
-// MARK: - Private Method
+// MARK: - Private Methods
 private extension FlexSpec {
-    // apply layout frame to each obj item
     func applyLayout(preserveOrigin: Bool) {
         __YogaSwiftAssertMainQueue()
         
-        guard self.isEnabled else {
+        guard isEnabled else { return }
+        
+        applyFrameToObject(preserveOrigin: preserveOrigin)
+        applyLayoutToChildren()
+    }
+    
+    func applyFrameToObject(preserveOrigin: Bool) {
+        guard let obj = self.owningView else {
             return
         }
         
-        // apply frame to obj
-        if let obj = self.obj {
-            let parentOrigin = findAncestorDistance(spec: self)
-            
-            let topLeft = CGPoint(
-                x: CGFloat(YGNodeLayoutGetLeft(self.ygNode)),
-                y: CGFloat(YGNodeLayoutGetTop(self.ygNode))
-            )
-            
-            let bottomRight = CGPoint(
-                x: CGFloat(YGNodeLayoutGetWidth(self.ygNode)) + topLeft.x,
-                y: CGFloat(YGNodeLayoutGetHeight(self.ygNode)) + topLeft.y
-            )
-            
-            let left = topLeft.x
-            let top = topLeft.y
-            
-            let origin = CGPoint(x: left, y: top).applying(.init(translationX: parentOrigin.x, y: parentOrigin.y))
-            let width = bottomRight.x - topLeft.x
-            let height = bottomRight.y - topLeft.y
-            
-            let frame = CGRect(
-                origin: preserveOrigin ? obj.frame.origin : origin,
-                size: .init(width: width, height: height)
-            )
-            
-            obj.frame = frame
-        }
+        let parentOrigin = findLayoutCoordinate(spec: self)
         
-        if !self.isLeaf {
-            self.children.forEach {
-                $0.applyLayout(preserveOrigin: false)
-            }
-        }
+        let nodeFrame = self.frame
+        let origin = calculateOrigin(parentOrigin: parentOrigin, nodeFrame: nodeFrame)
+        
+        obj.frame = CGRect(
+            origin: preserveOrigin ? obj.frame.origin : origin,
+            size: nodeFrame.size
+        )
+    }
+    
+    func calculateOrigin(parentOrigin: CGPoint, nodeFrame: CGRect) -> CGPoint {
+        CGPoint(x: nodeFrame.minX, y: nodeFrame.minY)
+            .applying(.init(translationX: parentOrigin.x, y: parentOrigin.y))
+    }
+    
+    func applyLayoutToChildren() {
+        guard !isLeaf else { return }
+        children.forEach { $0.applyLayout(preserveOrigin: false) }
     }
 }
 
-/// MARK: - layout
+// MARK: - Public Layout Methods
 public extension FlexSpec {
-    
     @discardableResult
     func layout(mode: LayoutMode = .fitContainer, applyLayout: Bool = true) -> CGSize {
+        let size = calculateLayoutSize(mode: mode)
+        self.calculateLayout(size: size)
+        
+        if applyLayout {
+            self.applyLayout(preserveOrigin: true)
+        }
+        
+        return CGSize(width: YGNodeLayoutGetWidth(ygNode), height: YGNodeLayoutGetHeight(ygNode))
+    }
+    
+    func calculateLayoutSize(mode: LayoutMode) -> CGSize {
         var width = Float.greatestFiniteMagnitude
         var height = Float.greatestFiniteMagnitude
         
-        if let real = self.obj {
+        if let real = self.owningView {
             width = Float(real.frame.size.width)
             height = Float(real.frame.size.height)
         }
         
-        if case .adjustWidth = mode {
-            width = Float.nan
-        } else if case .adjustHeight = mode {
-            height = Float.nan
+        switch mode {
+        case .adjustWidth:
+            width = .nan
+        case .adjustHeight:
+            height = .nan
+        default:
+            break
         }
-                
-        self.calculateLayout(size: CGSize(width: width, height: height))
-        if applyLayout {
-            self.applyLayout(preserveOrigin: true)
-        }
-        return CGSize(width: YGNodeLayoutGetWidth(self.ygNode), height: YGNodeLayoutGetHeight(self.ygNode))
+        
+        return CGSize(width: CGFloat(width), height: CGFloat(height))
     }
     
     func markDirty() {
-        if !self.isLeaf {
-            return
-        }
-        YGNodeSetMeasureFunc(self.ygNode, FlexSpec.measureFunc)
-        YGNodeMarkDirty(self.ygNode)
+        guard isLeaf else { return }
+        YGNodeSetMeasureFunc(ygNode, FlexSpec.measureFunc)
+        YGNodeMarkDirty(ygNode)
     }
     
     var dirty: Bool {
-        YGNodeIsDirty(self.ygNode)
+        YGNodeIsDirty(ygNode)
     }
-        
+    
     @discardableResult
-    final func calculateLayout(size: CGSize = CGSize.zero) -> CGSize {
+    func calculateLayout(size: CGSize = .zero) -> CGSize {
         Self.attachNodesFromHierachy(spec: self)
         YGNodeCalculateLayout(
-            self.ygNode,
+            ygNode,
             Float(size.width),
             Float(size.height),
-            YGNodeStyleGetDirection(self.ygNode)
+            YGNodeStyleGetDirection(ygNode)
         )
         
         return CGSize(
-            width: CGFloat(YGNodeLayoutGetWidth(self.ygNode)),
-            height: CGFloat(YGNodeLayoutGetHeight(self.ygNode))
+            width: CGFloat(YGNodeLayoutGetWidth(ygNode)),
+            height: CGFloat(YGNodeLayoutGetHeight(ygNode))
         )
     }
 }
@@ -230,10 +227,10 @@ public extension FlexSpec {
 extension FlexSpec {
     /// add current obj to parent, if self.obj == nil, find child to add
     private static func add(spec: FlexSpec?, to parent: FlexSpec?) {
-        guard let parentObj = parent?.obj else { //
+        guard let parentObj = parent?.owningView else { //
             return
         }
-        if let obj = spec?.obj {
+        if let obj = spec?.owningView {
             _ = parentObj.addSubItem(item: obj)
         } else {
             spec?.children.forEach { subspec in
@@ -321,27 +318,14 @@ private func roundPixelValue(_ value: CGFloat) -> CGFloat {
     return round(v * 100) / 100
 }
 
-private func findAncestorDistance(spec: FlexSpec) -> CGPoint {
-    guard let parent = spec.obj?.parent, let parentSpec = spec.parent else {
+private func findLayoutCoordinate(spec: FlexSpec) -> CGPoint {
+    guard let parent = spec.parent, parent.owningView == nil else {
         return .zero
     }
-    
-    func findAncestorDistance(point: CGPoint, obj: any Flexable, spec: FlexSpec) -> CGPoint {
-        if obj.flexSpec == spec {
-            return point
-        }
-        
-        guard let parent = spec.parent else {
-            assertionFailure("fatal error find same parent of spec and obj")
-            return .zero
-        }
-        
-        return findAncestorDistance(
-            point: CGPoint(x: spec.frame.minX + point.x, y: spec.frame.minY + point.y),
-            obj: obj,
-            spec: parent
-        )
-    }
-    
-    return findAncestorDistance(point: .zero, obj: parent, spec: parentSpec)
+
+    var origin = parent.frame.origin
+    let parentCoordinates = findLayoutCoordinate(spec: parent)
+    origin.x += parentCoordinates.x
+    origin.y += parentCoordinates.y
+    return origin
 }

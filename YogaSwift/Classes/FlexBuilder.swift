@@ -7,27 +7,6 @@
 
 import Foundation
 
-//public protocol Flexable {
-//    var node: FlexSpec { get }
-//}
-//
-//extension UIView: Flexable {
-//    public var node: FlexSpec {
-//        return self.flexSpec
-//    }
-//}
-//
-//extension CALayer: Flexable {
-//    public var node: FlexSpec {
-//        return self.flexSpec
-//    }
-//}
-//
-//extension FlexSpec: Flexable {
-//    public var node: FlexSpec {
-//        return self
-//    }
-//}
 
 @resultBuilder
 public struct FlexBuilder {

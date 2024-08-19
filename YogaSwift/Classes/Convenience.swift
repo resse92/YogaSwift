@@ -56,7 +56,7 @@ extension FlexSpec {
     convenience init(_ node: (any Flexable)?) {
         self.init()
         if let node = node {
-            obj = node
+            owningView = node
         }
     }
 }
